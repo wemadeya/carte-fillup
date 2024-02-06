@@ -310,6 +310,7 @@ function showDevis() {
   const searchvalue = document.getElementById("search");
 
   if (element && searchvalue && searchvalue.value !== "") {
+    element.style.opacity = "1";
     enableDynamicPosition();
   }
 }
@@ -319,6 +320,7 @@ function hideFormMobile() {
 
   if (element) {
     element.style.top = "105%";
+    element.style.opacity = "0";
     dynamicPositionEnabled = false;
   }
 }
