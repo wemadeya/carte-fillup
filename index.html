@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/style/style.css">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.js"></script>
+    <title>Trouver nos écrans</title>
+</head>
+<body>
+    <header>
+        <a href="https://fillupmedia.fr" class="back-cta">
+            <img class="arrow" src="/assets/arrow-left-solid.svg"></img>
+            <p class="back-text">retourner sur le site</p>
+            <p class="back-text-mobile">Retour</p>
+        </a>
+        <div>
+            <h1 class="title">Trouver nos écrans</h1>
+        </div>
+        <div class="image-container">
+            <img class="image" src="https://fillupmedia.fr/wp-content/uploads/2022/11/cropped-logo-light.png" alt="Logo">
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <div class="settings-container">
+                <div class="settings">
+                    <form class="form" onsubmit="event.preventDefault(); findLocationAndUpdateMap();">
+                        <div class="flex-col">
+                            <div class="label">
+                                <img src="/assets/ponter-black.svg">
+                                <label for="search">Adresse de votre établissement</label>    
+                            </div>
+                            
+                            <input type="text" name="search" id="search" placeholder="ex: 53 rue président Kruger, 69008 Lyon" oninput="suggestAddress()" autocomplete="off">
+                            <div id="addressSuggestions" class="suggestions"></div>
+                        </div>
+                        <div class="flex-col">
+                            <div class="label">
+                                <img src="/assets/target.svg">
+                                <label for="distance">Rayon de diffusion (en km)</label>    
+                            </div>
+                            <div class="range">
+                                <input type="range" value="0" min="1" max="300" name="distance" id="distance" placeholder="Rayon de diffusion" oninput="updateDistanceValue(this.value)">
+                                <span id="distanceValue">0</span>
+                            </div>                
+                        </div>
+                        <input id="button" class="button" type="submit" value="Rechercher" onclick="showForm()">
+                        <div class="mobile-btn-container">
+                            <input id="button-mobile" class="button" type="submit" value="Rechercher" onclick="showDevisBtn()">
+                            <button class="devis" onclick="showDevis()">Demander un devis</button>   
+                        </div>
+                        
+                    </form>
+                </div>
+                <div class="settings formulaire">
+                    <div class="form-container">
+                        <div class="croix" onclick="hideForm()">
+                            <img src="/assets/xmark.svg"></img>
+                        </div>
+                        <div class="croix-mobile" onclick="hideFormMobile()">
+                            <img src="/assets/xmark.svg"></img>
+                        </div>
+                        <form class="form-content" action="">
+                            <div class="form row">
+                                <div class="flex-col">
+                                    <label for="name">Nom</label>
+                                    <input type="text" name="name" placeholder="ex: Dupont" autocomplete="off">
+                                </div>
+                                <div class="flex-col">
+                                    <label for="surname">Prénom</label>
+                                    <input type="text" name="surname" placeholder="ex: Jean" autocomplete="off">
+                                </div>
+                                <div class="flex-col">
+                                    <label for="enseigne">Enseigne</label>
+                                    <input type="text" name="enseigne" placeholder="ex: intersport" autocomplete="off">
+                                </div>
+                                <div class="flex-col">
+                                    <label for="postal">Code postal</label>
+                                    <input type="number" name="postal" placeholder="ex: 69008" autocomplete="off">
+                                </div>
+                                <div class="flex-col">
+                                    <label for="email">Email</label>
+                                    <input type="email" name="email" placeholder="ex: paul@gmail.com" autocomplete="off">
+                                </div>                                            
+                                <div class="flex-col">
+                                    <label for="telephone">Téléphone</label>
+                                    <input type="tel" name="telephone" placeholder="ex: 02 04 15 65 84" autocomplete="off">
+                                </div>
+                            </div>
+                            <input id="searchAdress" class="searchAdress" type="submit" value="Demander un devis">
+                        </form>
+                    </div>
+                </div>
+            </div>            
+        </div> 
+        <div id="map"></div> 
+    </main>
+    <script src="/js/script.js"></script>
+</body>
+</html>

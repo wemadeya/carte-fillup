@@ -1,0 +1,438 @@
+body { 
+    margin: 0; 
+    padding: 0; 
+    color: white;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+}
+
+header {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 100px;
+    background-color: #011c34;
+    height: 8vh;
+}
+
+a {
+    text-decoration: none;
+    color: white;
+}
+
+/*
+ * header
+ */
+.image-container {
+    position: relative;
+    width: 100px;
+    height: 100%;
+}
+
+.image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.title {
+    font-weight: 400;
+}
+
+.back-cta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.arrow {
+    color: white;
+    width: 25px;
+}
+
+.back-text {
+    display: block;
+}
+
+.back-text-mobile {
+    display: none;
+}
+
+/*
+ * barre de recherche & formulaire
+ */
+.container {
+    position: relative;
+    width: 100%;
+    height: 92vh;
+}
+
+.settings-container {
+    position: absolute;
+    top: 2%;
+    right: 2%;
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/*barre de recherche*/
+.settings {
+    background-color: white;
+    border-radius: 10px;
+    color: black;
+    padding: 20px;
+    z-index: 900;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-radius: 20px;
+    background-color: #4DBDC6;
+    color: black;
+    cursor: pointer;
+    border: 1px solid #4DBDC6;
+    font-size: 18px;
+}
+
+.mobile-btn-container {
+    display: none;
+}
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.label {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+input[type=text], input[type=number], input[type=tel], input[type=email] {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid rgba(21, 21, 21, 0.1);
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.range {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+}
+
+input {
+    font-family: 'Inter', sans-serif;
+}
+
+input::placeholder {
+    color: rgb(21, 21, 21, 0.5);
+}
+
+input:focus {
+    outline: none;
+}
+
+input[type=range] {
+    -webkit-appearance: none; 
+    appearance: none;         
+    width: 100%;              
+    height: 4px;             
+    background: rgb(21, 21, 21, 0.1);    
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 15px;              
+    height: 15px;             
+    background: #4DBDC6;       
+    cursor: pointer;        
+    border-radius: 50%;  
+}
+
+.suggestions {
+    border: 1px solid #ddd;
+    border-top: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    position: absolute;
+    background: white;
+    width: calc(300px - 42px); 
+    max-height: 200px;
+    overflow-y: auto;
+    display: none; 
+    top: 33%;
+    border-radius: 5px;
+    z-index: 999;
+}
+
+.suggestion-item {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.suggestion-item:hover {
+    background-color: #f2f2f2;
+}
+
+/*formulaire*/
+.settings.formulaire {
+    position: absolute;
+    width: 100%;
+    z-index: 800;
+    padding: 0;
+    opacity: 0;
+    top: 0;
+    transition: all 0.5s;
+}
+
+.form-container {
+    position: relative;
+    padding: 20px;
+}
+
+.form-content {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.form.row {
+    flex-direction: row;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.croix {
+    position: absolute;
+    top: 10px;
+    right: 25px;
+    cursor: pointer;
+    z-index: 999;
+    width: 10px;
+    height: 10px;
+}
+
+.croix-mobile {
+    position: absolute;
+    top: 10px;
+    right: 25px;
+    cursor: pointer;
+    z-index: 999;
+    width: 10px;
+    height: 10px;
+    display: none;
+}
+
+.croix img {
+    width: 100%;
+    height: 100%;
+    background-color: #DCDCDC;
+    border-radius: 50%;
+    padding: 7px;
+}
+
+.searchAdress {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-radius: 20px;
+    background-color: transparent;
+    color: black;
+    cursor: pointer;
+    border: 2px solid #4DBDC6;
+    font-size: 18px;
+}
+
+/*
+ * carte
+ */
+#map { 
+    position: absolute; 
+    top: 0; 
+    bottom: 0; 
+    width: 100%; 
+    height: 100%;
+}
+
+.marker:hover {
+    cursor: pointer;
+}
+
+.popup {
+    color: black;
+    padding: 12px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+}
+
+/*
+ * responsive
+ */
+@media (max-width: 1024px) {
+    header {
+        padding: 0px 40px;
+    }
+
+    h1 {
+        font-size: 30px;
+    }
+
+    .arrow {
+        width: 20px;
+    }
+
+    .back-text {
+        display: none;
+    }
+
+    .back-text-mobile {
+        display: block;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        font-size: 14px;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    .button {
+        font-size: 16px;
+        width: 100%;
+    }
+
+    .searchAdress {
+        font-size: 16px;
+    }
+
+    .image-container {
+        width: 75px;
+        height: auto;
+    }
+
+    .settings-container {
+        top: auto;
+        bottom: 0;
+        right: auto;
+        left: auto;
+        width: 100%;
+    }
+
+    .settings {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+    }
+
+    /*boutons mobile*/
+    .mobile-btn-container {
+        display: flex;
+        gap: 10px;
+        position: relative;
+    }
+
+    .devis {
+        display: flex;
+        position: absolute;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        border-radius: 20px;
+        background-color: #FCD434;
+        color: black;
+        cursor: pointer;
+        border: 1px solid #FCD434;
+        font-size: 16px;
+        width: 49%;
+        right: 0;
+        z-index: 900;
+    }
+
+    #button {
+        display: none;
+    }
+
+    #button-mobile {
+        display: flex;
+        z-index: 998;
+        transition: all 0.5s;
+    }
+
+    /*formulaire*/
+    .settings.formulaire {
+        top: 100%;
+        z-index: 999;
+        opacity: 1;
+    }
+
+    .croix {
+        display: none;
+    }
+
+    .croix-mobile {
+        display: block;
+    }
+}
+
+@media (max-width: 450px) {
+    header {
+        padding: 0px 20px;
+    }
+
+    h1 {
+        font-size: 16px;
+    }
+
+    .arrow {
+        width: 15px;
+    }
+
+    .image-container {
+        width: 50px;
+    }
+
+    .button {
+        font-size: 14px;
+    }
+
+    .devis {
+        font-size: 14px;
+    }
+
+    .form.row .flex-col {
+        width: 40%;
+    }
+    
+}
