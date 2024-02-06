@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="/style/style.css">
+    <link rel="stylesheet" type="text/css" href="./style/style.css">
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.js"></script>
     <title>Trouver nos écrans</title>
 </head>
 <body>
     <header>
         <a href="https://fillupmedia.fr" class="back-cta">
-            <img class="arrow" src="/assets/arrow-left-solid.svg"></img>
+            <img class="arrow" src="./assets/arrow-left-solid.svg"></img>
             <p class="back-text">retourner sur le site</p>
             <p class="back-text-mobile">Retour</p>
         </a>
@@ -29,7 +29,7 @@
                     <form class="form" onsubmit="event.preventDefault(); findLocationAndUpdateMap();">
                         <div class="flex-col">
                             <div class="label">
-                                <img src="/assets/ponter-black.svg">
+                                <img src="./assets/ponter-black.svg">
                                 <label for="search">Adresse de votre établissement</label>    
                             </div>
                             
@@ -38,7 +38,7 @@
                         </div>
                         <div class="flex-col">
                             <div class="label">
-                                <img src="/assets/target.svg">
+                                <img src="./assets/target.svg">
                                 <label for="distance">Rayon de diffusion (en km)</label>    
                             </div>
                             <div class="range">
@@ -57,10 +57,10 @@
                 <div class="settings formulaire">
                     <div class="form-container">
                         <div class="croix" onclick="hideForm()">
-                            <img src="/assets/xmark.svg"></img>
+                            <img src="./assets/xmark.svg"></img>
                         </div>
                         <div class="croix-mobile" onclick="hideFormMobile()">
-                            <img src="/assets/xmark.svg"></img>
+                            <img src="./assets/xmark.svg"></img>
                         </div>
                         <form class="form-content" action="">
                             <div class="form row">
@@ -97,6 +97,6 @@
         </div> 
         <div id="map"></div> 
     </main>
-    <script src="/js/script.js"></script>
+    <script src="./js/script.js"></script>
 </body>
 </html>
