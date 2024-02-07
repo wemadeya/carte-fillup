@@ -5,6 +5,8 @@ body {
     overflow: hidden;
     font-family: 'Inter', sans-serif;
     font-size: 16px;
+    padding-bottom: env(safe-area-inset-bottom);
+    position: relative;
 }
 
 header {
@@ -392,7 +394,7 @@ input[type=range]::-webkit-slider-thumb {
 
     /*formulaire*/
     .settings.formulaire {
-        top: 100%;
+        top: 105%;
         z-index: 999;
         opacity: 1;
     }
