@@ -36,28 +36,122 @@ async function initMap() {
         icon: station.icon,
         idType: station.id_type,
         idObje: station.id_obje,
-        titre: station.titre.replace(/<br>/g, " ").replace(/<[^>]+>/g, ""),
+        titre: station.titre.replace(/<br>/g, " ").replace(/<[^>]+>/g, ""), // Nettoyer le HTML
         iconSize: [20, 25],
-        message: station.titre.replace(/<br>/g, " ").replace(/<[^>]+>/g, ""),
+        message: station.titre.replace(/<br>/g, " ").replace(/<[^>]+>/g, ""), // Nettoyer le HTML
       },
     })),
   };
 
-  // Ajouter des marqueurs à la carte
-  for (const marker of geojson.features) {
+  // Ajouter les marqueurs à la carte
+  geojson.features.forEach((marker) => {
+    // Créer un élément DOM pour chaque marqueur
     const el = document.createElement("div");
+    // Ajoutez la class marker
     el.className = "marker";
-    el.style.backgroundImage = `url(https://fillupmedia.fr/wp-content/uploads/2024/01/icon_location-blue.svg)`;
-    el.style.width = marker.properties.iconSize[0] + "px";
-    el.style.height = marker.properties.iconSize[1] + "px";
-    el.style.backgroundSize = "100%";
-
-    el.addEventListener("click", () => {
-      window.alert(marker.properties.message);
-    });
 
     new mapboxgl.Marker(el).setLngLat(marker.geometry.coordinates).addTo(map);
-  }
+
+    // Créer une card
+    const card = `
+                  <div class="card">
+                      <div class="triangle_wrapper">
+                          <img class="triangle" src="https://fillupmedia.fr/wp-content/uploads/2024/01/triangle.svg" alt="">
+                      </div>                                                                   
+                      <div class="card_wrapper">
+                          <div class="close_wrapper">
+                              <p>Fermer</p> 
+                              <img class="close" src="https://fillupmedia.fr/wp-content/uploads/2024/02/Close.svg" alt="icon close">
+                          </div>
+                          <div class="service_wrapper">
+                              <h3 class="service">Station service</h3>
+                              <p class="statut">Disponible</p>
+                          </div>
+                          <div class="ecran_wrapper">
+                              <img class="ecran" src="https://fillupmedia.fr/wp-content/uploads/2024/01/large-ecran.png" alt="photo ecran">
+                              <img class="ecran" src="https://fillupmedia.fr/wp-content/uploads/2024/01/small-ecran.png" alt="photo ecran">
+                          </div>
+                          <div class="card_content_wrapper">                              
+                              <div class="card_content">
+                                  <div>
+                                      <p>${marker.properties.titre}</p>
+                                  </div>
+                                  <div>
+                                      <p class="text-grey">Adresse</p>
+                                      <p>Centre IMC - Auchan Caluire - Lyon</p>
+                                  </div>
+                                  <div>
+                                      <p class="text-grey">Code postal</p>
+                                      <p>69300 - Caluire</p>
+                                  </div>
+                              </div>
+                              <div class="card_content">
+                                  <div class="flex">                               
+                                      <div>
+                                          <p class="text-grey">Taille</p>
+                                          <p>6</p>
+                                      </div>
+                                      <div>
+                                          <p class="text-grey">Taille</p>
+                                          <p>65'</p>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                          <a class="devis-card" href="">Demander un devis</a>
+                      </div>
+                  </div>
+                  `;
+
+    // Evénement
+
+    // Gérer l'événement de clic sur le marqueur
+    el.addEventListener("click", () => {
+      if (window.innerWidth <= 768) {
+        const mobileCard = document.querySelector(".mobile_card");
+        const maskMap = document.querySelector(".mask_map");
+
+        mobileCard.innerHTML = card;
+        mobileCard.classList.add("anim-y");
+        maskMap.classList.add("anim-mask_map");
+
+        // Écouter les événements mousedown
+        document.addEventListener("mousedown", (event) => {
+          // Si le clic a été effectué sur .close ou .mask_map
+          if (
+            event.target.closest(".close_wrapper") ||
+            event.target.closest(".mask_map")
+          ) {
+            mobileCard.classList.remove("anim-y");
+            maskMap.classList.remove("anim-mask_map");
+          }
+        });
+      } else {
+        const allMarkers = document.querySelectorAll(".marker");
+        allMarkers.forEach(function (marker) {
+          marker.style.zIndex = "0";
+          marker.innerHTML = "";
+        });
+
+        el.style.zIndex = "999";
+        el.innerHTML = card;
+
+        // Écouter les événements mousedown sur le document entier
+        document.addEventListener("mousedown", (event) => {
+          // Vérifier si le clic a été effectué en dehors du marqueur
+          if (
+            !event.target.closest(".marker") ||
+            event.target.closest(".close_wrapper")
+          ) {
+            // Supprimer la classe 'block' de l'élément actuel s'il existe
+            event.stopPropagation();
+            // Efface le contenu de `el`
+            el.innerHTML = "";
+          }
+        });
+      }
+    });
+  });
 }
 
 // Appeler la fonction pour initialiser la carte

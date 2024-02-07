@@ -1,7 +1,6 @@
 body { 
     margin: 0; 
     padding: 0; 
-    color: white;
     overflow: hidden;
     font-family: 'Inter', sans-serif;
     font-size: 16px;
@@ -18,6 +17,10 @@ header {
     padding: 0px 100px;
     background-color: #011c34;
     height: 8vh;
+}
+
+h1 {
+    color: white;
 }
 
 a {
@@ -283,6 +286,15 @@ input[type=range]::-webkit-slider-thumb {
     height: 100%;
 }
 
+.marker {
+    background-image: url(https://fillupmedia.fr/wp-content/uploads/2024/01/icon_location-blue.svg);
+    background-repeat: no-repeat;
+    background-size: 100%;
+    height: 24px;
+    width: 20px;
+    cursor: pointer;
+}
+
 .marker:hover {
     cursor: pointer;
 }
@@ -292,6 +304,196 @@ input[type=range]::-webkit-slider-thumb {
     padding: 12px;
     font-size: 14px;
     font-family: 'Inter', sans-serif;
+}
+
+.card {
+    position: absolute;
+    top: 100%;
+    transform: translate(-50%, 0%);
+    left: 50%;
+    z-index: 999;
+    cursor: initial;
+}
+
+.card_wrapper {
+    display: flex;
+    width: 320px;
+    padding: 25px;
+    flex-direction: column;
+    gap: 35px;
+    background-color: #fff;
+    box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.50);
+    border-radius: 10px;
+}
+
+.card_content_wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.card_content {
+    display: flex;
+    padding: 12px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    border-radius: 5px;
+    background: rgba(0, 0, 0, 0.08);
+    font-weight: 600;
+    font-family: 16px;
+    /*width: 100%;*/
+}
+
+.text-grey {
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(0, 0, 0, 0.25);
+}
+
+.flex {
+    display: flex;
+    width: 100%;
+}
+.flex div {
+    width: 50%;
+}
+.ecran_wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+}
+.ecran {
+    width: 50px;
+    object-fit: cover;
+}
+.service {
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+.service_wrapper {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.statut {
+    padding: 4px 10px;
+    color: #4DBDC6;;
+    font-family: "Inter";
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    border-radius: 50px;
+    background: rgba(77, 189, 198, 0.20);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.close {
+    height: 14px;
+}
+
+.close_wrapper {
+    display: flex;
+    padding: 5px 10px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border-radius: 50px;
+    background: #E1E1E1;
+    font-size: 15px;
+    font-weight: 500;
+    width: max-content;
+    margin-left: auto;
+    cursor: pointer;
+}
+
+.mobile_card {
+    border-radius: 20px 20px 0px 0px;
+    background: #FFF;
+    position: absolute;
+    top: 100%;
+    width: 100%;
+    left: 0;
+    height: max-content;
+    z-index: 999;
+    transform: translate(0%, 0%);
+    transition: 0.2s ease-out;
+    display: none;
+}
+
+.anim-y {
+    transform: translate(0%, -100%);
+}
+
+.triangle_wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.triangle {
+    width: 20px;
+    vertical-align: bottom;
+    margin-bottom: -2px;
+}
+
+.devis {
+    display: none;
+    padding: 10px 12px;
+    border-radius: 50px;
+    background: #4DBDC6;
+    text-align: center;
+    color: #01122E;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.mapboxgl-popup-tip {
+    display: none;
+}
+
+.mapboxgl-popup .mapboxgl-popup-content {
+    transform: translate(-50%, 2.5%);
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    padding: 0;
+    width: 250px;
+    background-color: transparent;
+}
+
+.mapboxgl-popup-content .mapboxgl-popup-close-button {
+    font-size: 46px;
+    border: none;
+}
+
+.mapboxgl-popup-content .mapboxgl-popup-close-button:hover {
+    background-color: transparent;
+}
+
+.mapboxgl-popup-content .mapboxgl-popup-close-button:focus-visible {
+    border: none;
+    outline: none;
+}
+
+.mask_map {
+    display: none;
+    opacity: 0;
+}
+
+.anim-mask_map {
+    display: block;
+    opacity: 0.5;
+    background-color: #000;
+    position: fixed;
+    top: 0;
+    height: 100%;
+    width: 100%;
 }
 
 /*
@@ -405,6 +607,32 @@ input[type=range]::-webkit-slider-thumb {
     }
 
     .croix-mobile {
+        display: block;
+    }
+
+    .mobile_card {
+        display: block;
+    }
+
+    .card {
+        position: initial;
+        transform: translate(0,0);
+    }
+
+    .triangle_wrapper {
+        display: none;
+    }
+
+    .card_wrapper {
+        width: 100%;
+        box-shadow: none;
+    }
+
+    .ecran_wrapper {
+        display: none;
+    }
+
+    .devis-card {
         display: block;
     }
 }
