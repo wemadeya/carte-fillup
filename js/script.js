@@ -3,7 +3,7 @@ var circle;
 let dynamicPositionEnabled = true;
 
 mapboxgl.accessToken =
-  "pk.eyJ1Ijoid2VtYWRleWEiLCJhIjoiY2xyeXZ5YTYwMW14OTJqbXgwZnp5Z3BpdSJ9.trZNiFTA3H8er9j1UIxKLw";
+  "pk.eyJ1Ijoid2VtYWRleWEiLCJhIjoiY2xzYzI2cXJwMDg2eTJtbWhnZGt0NHEwMiJ9.wa4jCE_DBLiNKSuNUTOpHQ";
 
 var map = new mapboxgl.Map({
   container: "map",
