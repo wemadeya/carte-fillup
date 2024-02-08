@@ -433,3 +433,59 @@ function enableDynamicPosition() {
 }
 
 window.addEventListener("resize", adjustFormPosition);
+
+document
+  .getElementById("formulaire")
+  .addEventListener("submit", function (event) {
+    event.preventDefault();
+    var portalId = "23713695";
+    var formGuid = "8bd3afe0-a05f-4732-b2e3-0224451f74b7";
+
+    // L'URL de l'API pour soumettre le formulaire
+    var url = `https://api.hsforms.com/submissions/v3/integration/submit/${portalId}/${formGuid}`;
+
+    var formData = {
+      fields: [
+        {
+          name: "lastname",
+          value: document.getElementById("lastname").value,
+        },
+        {
+          name: "firstname",
+          value: document.getElementById("firstname").value,
+        },
+        {
+          name: "company",
+          value: document.getElementById("company").value,
+        },
+        {
+          name: "zip",
+          value: document.getElementById("zip").value,
+        },
+        {
+          name: "email",
+          value: document.getElementById("email").value,
+        },
+        {
+          name: "phone",
+          value: document.getElementById("phone").value,
+        },
+      ],
+    };
+
+    // Création et envoi de la requête POST
+    fetch(url, {
+      method: "POST",
+      body: JSON.stringify(formData),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Succès:", data);
+      })
+      .catch((error) => {
+        console.error("Erreur:", error);
+      });
+  });
