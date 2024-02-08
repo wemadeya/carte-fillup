@@ -234,6 +234,10 @@ input[type=range]::-webkit-slider-thumb {
     justify-content: center;
 }
 
+.form.row .flex-col {
+    width: 45%;
+}
+
 .croix {
     position: absolute;
     top: 10px;
