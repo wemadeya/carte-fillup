@@ -356,7 +356,9 @@ input[type=range]::-webkit-slider-thumb {
     background: rgba(0, 0, 0, 0.08);
     font-weight: 600;
     font-family: 16px;
-    /*width: 100%;*/
+}
+.card_content div p {
+    margin: 0;
 }
 
 .text-grey {
