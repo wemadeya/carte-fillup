@@ -213,6 +213,7 @@ input[type=range]::-webkit-slider-thumb {
     opacity: 0;
     top: 0;
     transition: all 0.5s;
+    display: none;
 }
 
 .form-container {

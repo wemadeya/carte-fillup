@@ -373,8 +373,12 @@ function showForm() {
   const searchvalue = document.getElementById("search");
 
   if (element && searchvalue && searchvalue.value !== "") {
-    element.style.opacity = "1";
-    element.style.top = "105%";
+    setTimeout(() => {
+      element.style.top = "105%";
+      element.style.opacity = "1";
+    }, 200);
+    element.style.opacity = "0";
+    element.style.display = "block";
   }
 }
 
@@ -385,6 +389,9 @@ function hideForm() {
   if (element) {
     element.style.opacity = "0";
     element.style.top = "0";
+    setTimeout(() => {
+      element.style.display = "none";
+    }, 200);
   }
 }
 
