@@ -484,6 +484,7 @@ document
       .then((response) => response.json())
       .then((data) => {
         console.log("Succès:", data);
+        alert("Votre demande de devis a bien été envoyée");
       })
       .catch((error) => {
         console.error("Erreur:", error);
