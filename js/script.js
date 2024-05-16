@@ -15,10 +15,10 @@ var map = new mapboxgl.Map({
 // Fonction pour récupérer les données de l'API
 async function fetchStations() {
   try {
-    const apiUrl = `https://fum7.egiteko.com/api/maps_website?token=wemadeya_token`;
+    const apiUrl = `http://localhost:3000/api/stations`; 
     const response = await fetch(apiUrl);
     const data = await response.json();
-    return data.atts[0].stations_all;
+    return data;
   } catch (error) {
     console.error("Erreur lors de la récupération des données :", error);
   }
@@ -36,9 +36,13 @@ async function initMap() {
         icon: station.icon,
         idType: station.id_type,
         idObje: station.id_obje,
-        titre: station.titre.replace(/<br>/g, " ").replace(/<[^>]+>/g, ""), // Nettoyer le HTML
+        enseigne: station.enseigne,
+        codePostal: station.CP,
+        adresse: station.Adr,
+        tailleEcran: station.taille_ecran,
+        nombreEcran: station.nombre_ecran,
+        status: station.statut_nom,
         iconSize: [20, 25],
-        message: station.titre.replace(/<br>/g, " ").replace(/<[^>]+>/g, ""), // Nettoyer le HTML
       },
     })),
   };
@@ -65,7 +69,7 @@ async function initMap() {
                           </div>
                           <div class="service_wrapper">
                               <h3 class="service">Station service</h3>
-                              <p class="statut">Disponible</p>
+                              <p class="statut">${marker.properties.status}</p>
                           </div>
                           <div class="ecran_wrapper">
                               <img class="ecran" src="https://fillupmedia.fr/wp-content/uploads/2024/01/large-ecran.png" alt="photo ecran">
@@ -74,26 +78,23 @@ async function initMap() {
                           <div class="card_content_wrapper">                              
                               <div class="card_content">
                                   <div>
-                                      <p>${marker.properties.titre}</p>
-                                  </div>
-                                  <div>
                                       <p class="text-grey">Adresse</p>
-                                      <p>Centre IMC - Auchan Caluire - Lyon</p>
+                                      <p>${marker.properties.adresse}</p>
                                   </div>
                                   <div>
                                       <p class="text-grey">Code postal</p>
-                                      <p>69300 - Caluire</p>
+                                      <p>${marker.properties.codePostal}</p>
                                   </div>
                               </div>
                               <div class="card_content">
                                   <div class="flex">                               
                                       <div>
-                                          <p class="text-grey">Taille</p>
-                                          <p>6</p>
+                                          <p class="text-grey">Nombre écran</p>
+                                          <p>${marker.properties.nombreEcran}</p>
                                       </div>
                                       <div>
                                           <p class="text-grey">Taille</p>
-                                          <p>65'</p>
+                                          <p>${marker.properties.tailleEcran}</p>
                                       </div>
                                   </div>
                               </div>
@@ -431,49 +432,26 @@ function enableDynamicPosition() {
   dynamicPositionEnabled = true;
   adjustFormPosition();
 }
-
 window.addEventListener("resize", adjustFormPosition);
 
+
+// Formulaire de demande de devis
 document
   .getElementById("formulaire")
   .addEventListener("submit", function (event) {
     event.preventDefault();
-    var portalId = "23713695";
-    var formGuid = "8bd3afe0-a05f-4732-b2e3-0224451f74b7";
 
-    // L'URL de l'API pour soumettre le formulaire
-    var url = `https://api.hsforms.com/submissions/v3/integration/submit/${portalId}/${formGuid}`;
+    var url = `http://localhost:3000/api/submit-form`;
 
-    var formData = {
-      fields: [
-        {
-          name: "lastname",
-          value: document.getElementById("lastname").value,
-        },
-        {
-          name: "firstname",
-          value: document.getElementById("firstname").value,
-        },
-        {
-          name: "company",
-          value: document.getElementById("company").value,
-        },
-        {
-          name: "zip",
-          value: document.getElementById("zip").value,
-        },
-        {
-          name: "email",
-          value: document.getElementById("email").value,
-        },
-        {
-          name: "phone",
-          value: document.getElementById("phone").value,
-        },
-      ],
+    const formData = {
+      lastname: document.getElementById("lastname").value,
+      firstname: document.getElementById("firstname").value,
+      company: document.getElementById("company").value,
+      zip: document.getElementById("zip").value,
+      email: document.getElementById("email").value,
+      phone: document.getElementById("phone").value,
     };
 
-    // Création et envoi de la requête POST
     fetch(url, {
       method: "POST",
       body: JSON.stringify(formData),
@@ -484,7 +462,7 @@ document
       .then((response) => response.json())
       .then((data) => {
         console.log("Succès:", data);
-        alert("Votre demande de devis a bien été envoyée");
+        alert(data.message);
       })
       .catch((error) => {
         console.error("Erreur:", error);
