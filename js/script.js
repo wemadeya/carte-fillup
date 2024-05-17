@@ -15,7 +15,7 @@ var map = new mapboxgl.Map({
 // Fonction pour récupérer les données de l'API
 async function fetchStations() {
   try {
-    const apiUrl = `http://localhost:3000/api/stations`; 
+    const apiUrl = `https://plateforme.wemadeya.fr/api/stations`; 
     const response = await fetch(apiUrl);
     const data = await response.json();
     return data;
@@ -103,8 +103,6 @@ async function initMap() {
                       </div>
                   </div>
                   `;
-
-    // Evénement
 
     // Gérer l'événement de clic sur le marqueur
     el.addEventListener("click", () => {
@@ -441,7 +439,7 @@ document
   .addEventListener("submit", function (event) {
     event.preventDefault();
 
-    var url = `http://localhost:3000/api/submit-form`;
+    var url = `https://plateforme.wemadeya.fr/api/submit-form`;
 
     const formData = {
       lastname: document.getElementById("lastname").value,
