@@ -448,7 +448,7 @@ document
       zip: document.getElementById("zip").value,
       email: document.getElementById("email").value,
       phone: document.getElementById("phone").value,
-      consentement: document.getElementById("consentement").checked ? "true" : "false"
+      consent: document.getElementById("consent").checked ? "true" : "false"
     };
 
     fetch(url, {
@@ -460,9 +460,7 @@ document
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("Succès:", data);
         alert(data.message);
-        console.log(data);
       })
       .catch((error) => {
         console.error("Erreur:", error);
