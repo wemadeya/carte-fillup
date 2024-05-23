@@ -448,7 +448,7 @@ document
       zip: document.getElementById("zip").value,
       email: document.getElementById("email").value,
       phone: document.getElementById("phone").value,
-      consent: document.getElementById("consent").checked.toString(),
+      consentement: document.getElementById("consentement").checked ? "true" : "false"
     };
 
     fetch(url, {
