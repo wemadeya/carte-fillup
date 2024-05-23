@@ -448,6 +448,7 @@ document
       zip: document.getElementById("zip").value,
       email: document.getElementById("email").value,
       phone: document.getElementById("phone").value,
+      rgpd: document.getElementById("rgpd").checked.toString(),
     };
 
     fetch(url, {
@@ -461,6 +462,7 @@ document
       .then((data) => {
         console.log("Succès:", data);
         alert(data.message);
+        console.log(data);
       })
       .catch((error) => {
         console.error("Erreur:", error);
