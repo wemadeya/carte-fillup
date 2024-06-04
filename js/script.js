@@ -8,7 +8,7 @@ mapboxgl.accessToken =
 var map = new mapboxgl.Map({
   container: "map",
   style: "mapbox://styles/wemadeya/clqcioya500b201qr8m6v1wsr",
-  center: [2.339294, 48.963199],
+  center: [2.339294, 46.8],
   zoom: 5,
 });
 
@@ -68,15 +68,15 @@ async function initMap() {
                               <img class="close" src="https://fillupmedia.fr/wp-content/uploads/2024/02/Close.svg" alt="icon close">
                           </div>
                           <div class="service_wrapper">
-                              <h3 class="service">Station service</h3>
+                              <h3 class="service">Station-service</h3>
                               <p class="statut">${marker.properties.status}</p>
-                          </div>
-                          <div class="ecran_wrapper">
-                              <img class="ecran" src="https://fillupmedia.fr/wp-content/uploads/2024/01/large-ecran.png" alt="photo ecran">
-                              <img class="ecran" src="https://fillupmedia.fr/wp-content/uploads/2024/01/small-ecran.png" alt="photo ecran">
                           </div>
                           <div class="card_content_wrapper">                              
                               <div class="card_content">
+                                  <div>
+                                      <p class="text-grey">Enseigne</p>
+                                      <p>${marker.properties.enseigne}</p>
+                                  </div>
                                   <div>
                                       <p class="text-grey">Adresse</p>
                                       <p>${marker.properties.adresse}</p>
@@ -89,7 +89,7 @@ async function initMap() {
                               <div class="card_content">
                                   <div class="flex">                               
                                       <div>
-                                          <p class="text-grey">Nombre écran</p>
+                                          <p class="text-grey">Nombre d'écrans</p>
                                           <p>${marker.properties.nombreEcran}</p>
                                       </div>
                                       <div>
