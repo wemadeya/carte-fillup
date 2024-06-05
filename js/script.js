@@ -374,6 +374,7 @@ function adjustFormPosition() {
   }
 }
 
+
 // Fonction qui affiche le formulaire au clic sur le bouton "Rechercher"
 function showForm() {
   const element = document.querySelector(".settings.formulaire");
