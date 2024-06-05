@@ -99,13 +99,21 @@ async function initMap() {
                                   </div>
                               </div>
                           </div>
-                          <a class="devis-card" href="">Demander un devis</a>
+                          <button class="devis-card" onclick="showDevisMarker()">Demander un devis</button>
                       </div>
                   </div>
                   `;
 
     // Gérer l'événement de clic sur le marqueur
     el.addEventListener("click", () => {
+      map.flyTo({
+        center: marker.geometry.coordinates,
+        zoom: 14, 
+        speed: 1.2,
+        curve: 1.4,
+        essential: true 
+      });
+
       if (window.innerWidth <= 768) {
         const mobileCard = document.querySelector(".mobile_card");
         const maskMap = document.querySelector(".mask_map");
@@ -358,9 +366,9 @@ function adjustFormPosition() {
   if (!element || !dynamicPositionEnabled) return;
 
   if (window.innerWidth <= 550) {
-    element.style.top = "-33%";
+    element.style.top = "-65%";
   } else if (window.innerWidth <= 768) {
-    element.style.top = "0";
+    element.style.top = "-60%";
   } else {
     element.style.top = "105%";
   }
@@ -410,6 +418,20 @@ function showDevis() {
   const searchvalue = document.getElementById("search");
 
   if (element && searchvalue && searchvalue.value !== "") {
+    element.style.opacity = "1";
+    enableDynamicPosition();
+  }
+}
+
+//Fonction qui cache le formulaire en mobile avec le bouton dans le marqueur
+function showDevisMarker() {
+  const element = document.querySelector(".settings.formulaire");
+  const mobileCard = document.querySelector(".mobile_card");
+  const maskMap = document.querySelector(".mask_map");
+
+  if (element) {
+    mobileCard.classList.remove("anim-y");
+    maskMap.classList.remove("anim-mask_map");
     element.style.opacity = "1";
     enableDynamicPosition();
   }
