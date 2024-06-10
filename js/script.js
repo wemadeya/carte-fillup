@@ -489,3 +489,13 @@ document
         console.error("Erreur:", error);
       });
   });
+
+  //fonction pour changer la couleur du statut
+  document.addEventListener("DOMContentLoaded", function() {
+    const statutElements = document.querySelectorAll(".statut");
+    statutElements.forEach((element) => {
+        if (element.textContent.trim() === "Déploiement en 2024") {
+            element.classList.add("active");
+        }
+    });
+});

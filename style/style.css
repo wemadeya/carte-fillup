@@ -412,16 +412,20 @@ input[type=range]::-webkit-slider-thumb {
 
 .statut {
     padding: 4px 10px;
-    color: #4DBDC6;
-    ;
     font-size: 12px;
     font-style: normal;
     font-weight: 500;
     border-radius: 50px;
-    background: rgba(77, 189, 198, 0.20);
     display: flex;
     justify-content: center;
     align-items: center;
+    color: #4DBDC6;
+    background: rgba(77, 189, 198, 0.20);
+}
+
+.active {
+    color: #BD9700;
+    background: rgba(252, 212, 52, 0.20);
 }
 
 .close {
