@@ -52,11 +52,18 @@ async function initMap() {
     // Créer un élément DOM pour chaque marqueur
     const el = document.createElement("div");
     // Ajoutez la class marker
+    if (marker.properties.status === "Active") {
+      el.style.backgroundImage = "url(https://fillupmedia.fr/wp-content/uploads/2024/01/icon_location-blue.svg)";
+      
+    } else {
+      el.style.backgroundImage = "url(https://fillupmedia.fr/wp-content/uploads/2024/06/icon-orange.svg)";
+    }
     el.className = "marker";
 
     new mapboxgl.Marker(el).setLngLat(marker.geometry.coordinates).addTo(map);
 
     // Créer une card
+    const statusColor = marker.properties.status === "Active" ? "color: #4DBDC6; background: rgba(77, 189, 198, 0.20);" : " color: #BD9700; background: rgba(252, 212, 52, 0.20);";
     const card = `
                   <div class="card">
                       <div class="triangle_wrapper">
@@ -69,7 +76,7 @@ async function initMap() {
                           </div>
                           <div class="service_wrapper">
                               <h3 class="service">Station-service</h3>
-                              <p class="statut">${marker.properties.status}</p>
+                              <p class="statut" style="${statusColor}">${marker.properties.status}</p>
                           </div>
                           <div class="card_content_wrapper">                              
                               <div class="card_content">
@@ -489,13 +496,3 @@ document
         console.error("Erreur:", error);
       });
   });
-
-  //fonction pour changer la couleur du statut
-  document.addEventListener("DOMContentLoaded", function() {
-    const statutElements = document.querySelectorAll(".statut");
-    statutElements.forEach((element) => {
-        if (element.textContent.trim() === "Déploiement en 2024") {
-            element.classList.add("active");
-        }
-    });
-});
