@@ -18,7 +18,7 @@ var map = new mapboxgl.Map({
 
 // Si l'utilisateur est sur un appareil mobile, ajuster le zoom
 if (isMobileDevice()) {
-  map.setZoom(3); 
+  map.setZoom(4); 
 }
 
 // Fonction pour récupérer les données de l'API
@@ -73,6 +73,9 @@ async function initMap() {
 
     // Créer une card
     const statusColor = marker.properties.status === "Active" ? "color: #4DBDC6; background: rgba(77, 189, 198, 0.20);" : " color: #BD9700; background: rgba(252, 212, 52, 0.20);";
+    const regex = /65/;
+    const serviceTitle = regex.test(marker.properties.tailleEcran) ? "Galerie marchande" : "Station-service";
+
     const card = `
                   <div class="card">
                       <div class="triangle_wrapper">
@@ -84,7 +87,7 @@ async function initMap() {
                               <img class="close" src="https://fillupmedia.fr/wp-content/uploads/2024/02/Close.svg" alt="icon close">
                           </div>
                           <div class="service_wrapper">
-                              <h3 class="service">Station-service</h3>
+                              <h3 class="service">${serviceTitle}</h3>
                               <p class="statut" style="${statusColor}">${marker.properties.status}</p>
                           </div>
                           <div class="card_content_wrapper">                              
@@ -219,6 +222,10 @@ function findLocationAndUpdateMap() {
     });
 }
 
+function isMobileDevice() {
+  return /Mobi|Android/i.test(navigator.userAgent);
+}
+
 // Fonction pour convertir les mètres en pixels au niveau de zoom maximal
 const metersToPixelsAtMaxZoom = (meters, latitude) =>
   meters / 0.075 / Math.cos((latitude * Math.PI) / 180);
@@ -299,7 +306,14 @@ function updateMapWithStations(lat, lon, radius) {
 
   // Ajuster le zoom et le centre de la carte pour inclure le cercle entièrement
   var bounds = calculateBounds([lon, lat], radiusInMeters);
-  map.fitBounds(bounds, { padding: 50 });
+  var fitOptions = { padding: 50 };
+
+  if (isMobileDevice()) {
+    fitOptions.padding = 100;
+    fitOptions.maxZoom = 10;
+}
+
+map.fitBounds(bounds, fitOptions);
 }
 
 // Fonction simplifiée pour calculer les limites d'un cercle sans Turf.js

@@ -149,6 +149,10 @@ a {
     font-size: 14px;
 }
 
+#button-mobile {
+    padding: 10px;
+}
+
 .mobile-btn-container {
     display: none;
 }
