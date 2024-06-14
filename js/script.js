@@ -5,12 +5,21 @@ let dynamicPositionEnabled = true;
 mapboxgl.accessToken =
   "pk.eyJ1Ijoid2VtYWRleWEiLCJhIjoiY2xzYzI2cXJwMDg2eTJtbWhnZGt0NHEwMiJ9.wa4jCE_DBLiNKSuNUTOpHQ";
 
+function isMobileDevice() {
+  return /Mobi|Android/i.test(navigator.userAgent);
+}
+
 var map = new mapboxgl.Map({
   container: "map",
   style: "mapbox://styles/wemadeya/clqcioya500b201qr8m6v1wsr",
   center: [2.339294, 46.8],
-  zoom: 5,
+  zoom: 5, 
 });
+
+// Si l'utilisateur est sur un appareil mobile, ajuster le zoom
+if (isMobileDevice()) {
+  map.setZoom(3); 
+}
 
 // Fonction pour récupérer les données de l'API
 async function fetchStations() {
@@ -113,9 +122,11 @@ async function initMap() {
 
     // Gérer l'événement de clic sur le marqueur
     el.addEventListener("click", () => {
+      const [longitude, latitude] = marker.geometry.coordinates;
+      const adjustedLatitude = latitude - 0.005; 
       map.flyTo({
-        center: marker.geometry.coordinates,
-        zoom: 14, 
+        center: [longitude, adjustedLatitude],
+        zoom: 14,
         speed: 1.2,
         curve: 1.4,
         essential: true 
@@ -147,7 +158,7 @@ async function initMap() {
           marker.innerHTML = "";
         });
 
-        el.style.zIndex = "999";
+        el.style.zIndex = "800";
         el.innerHTML = card;
 
         // Écouter les événements mousedown sur le document entier

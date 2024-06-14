@@ -1,8 +1,43 @@
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../assets/Satoshi-Light.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../assets/Satoshi-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../assets/Satoshi-Medium.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../assets/Satoshi-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Satoshi';
+    src: url('../assets/Satoshi-Black.otf') format('opentype');
+    font-weight: 900;
+    font-style: normal;
+}
+
 body {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Satoshi', sans-serif;
     font-size: 14px;
     padding-bottom: env(safe-area-inset-bottom);
 }
@@ -44,7 +79,7 @@ a {
 }
 
 .title {
-    font-weight: 400;
+    font-weight: 500;
 }
 
 .back-cta {
@@ -356,7 +391,7 @@ input[type=range]::-webkit-slider-thumb {
     gap: 10px;
     border-radius: 5px;
     background: rgba(0, 0, 0, 0.08);
-    font-weight: 600;
+    font-weight: 700;
     font-family: 16px;
 }
 
@@ -394,7 +429,7 @@ input[type=range]::-webkit-slider-thumb {
 .service {
     font-size: 16px;
     font-style: normal;
-    font-weight: 600;
+    font-weight: 700;
     line-height: normal;
 }
 
