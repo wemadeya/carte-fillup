@@ -136,7 +136,7 @@ a {
     gap: 20px;
 }
 
-.button {
+.searchAdress, #searchAdress-mobile {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -149,7 +149,7 @@ a {
     font-size: 14px;
 }
 
-#button-mobile {
+#searchAdress-mobile {
     padding: 10px;
 }
 
@@ -309,7 +309,7 @@ input[type=range]::-webkit-slider-thumb {
     padding: 7px;
 }
 
-.searchAdress {
+.devis {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -606,7 +606,7 @@ input[type=range]::-webkit-slider-thumb {
         width: 100%;
     }
 
-    .searchAdress {
+    .devis {
         font-size: 16px;
     }
 
@@ -639,7 +639,7 @@ input[type=range]::-webkit-slider-thumb {
         position: relative;
     }
 
-    .devis {
+    .devis-mobile {
         display: flex;
         position: absolute;
         justify-content: center;
@@ -650,17 +650,17 @@ input[type=range]::-webkit-slider-thumb {
         color: black;
         cursor: pointer;
         border: 1px solid #FCD434;
-        font-size: 16px;
+        font-size: 14px;
         width: 49%;
         right: 0;
         z-index: 900;
     }
 
-    #button {
+    #searchAdress {
         display: none;
     }
 
-    #button-mobile {
+    #searchAdress-mobile {
         display: flex;
         z-index: 998;
         transition: all 0.5s;
@@ -730,7 +730,7 @@ input[type=range]::-webkit-slider-thumb {
         font-size: 14px;
     }
 
-    .devis {
+    .devis-mobile {
         font-size: 14px;
     }
 
