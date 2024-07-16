@@ -398,11 +398,14 @@ function adjustFormPosition() {
   if (!element || !dynamicPositionEnabled) return;
 
   if (window.innerWidth <= 550) {
-    element.style.top = "-65%";
+    element.style.top = "100%";
+    element.style.transform = "translateY(-100%)";
   } else if (window.innerWidth <= 768) {
-    element.style.top = "-60%";
+    element.style.top = "100%";
+    element.style.transform = "translateY(-100%)";
   } else {
     element.style.top = "105%";
+    element.style.transform = "translateY(0%)";
   }
 }
 
@@ -488,22 +491,154 @@ function enableDynamicPosition() {
 window.addEventListener("resize", adjustFormPosition);
 
 
-// Formulaire de demande de devis
-document
-  .getElementById("formulaire")
-  .addEventListener("submit", function (event) {
-    event.preventDefault();
+const message = {
+  name: "Le champ doit contenir au moins 2 caractères.",
+  name2: "Le champ contient des caractères non valides.",
+  email: "L'email est requis.",
+  email2: "L'email n'est pas valide.",
+  quantity: "Le nombre doit être compris entre 1 et 99.",
+  conditions: "Vous devez accepter les conditions.",
+  enseigne: "L'enseigne est requise.",
+  zip: "Le code postal est requis et doit être valide.",
+  phone: "Le numéro de téléphone est requis et doit être valide.",
+  consentement: "Vous devez accepter la politique de confidentialité."
+};
 
+// Regex pour la validation
+const regexName = /^[a-zA-Z\s]+$/;
+const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const regexZip = /^\d{5}$/;
+const regexPhone = /^\d{10}$/;
+
+// Ajoute l'erreur
+function addError(element, message) {
+  const errorElement = document.getElementById(`error-${element.id}`);
+  errorElement.textContent = message;
+}
+
+// Enlève l'erreur
+function removeError(element) {
+  const errorElement = document.getElementById(`error-${element.id}`);
+  errorElement.textContent = "";
+}
+
+// Vérifie lastname
+function checkLastName(lastname, message) {
+  if (lastname.value.length < 2 || !lastname.value.match(regexName)) {
+    addError(lastname, message.name);
+    return false;
+  } else {
+    removeError(lastname);
+  }
+  return true;
+}
+
+// Vérifie firstname
+function checkFirstName(firstname, message) {
+  if (firstname.value.length < 2 || !firstname.value.match(regexName)) {
+    addError(firstname, message.name);
+    return false;
+  } else {
+    removeError(firstname);
+  }
+  return true;
+}
+
+// Vérifie email
+function checkEmail(email, message) {
+  if (!email.value || !email.value.match(regexEmail)) {
+    addError(email, message.email2);
+    return false;
+  } else {
+    removeError(email);
+  }
+  return true;
+}
+
+// Vérifie company
+function checkCompany(company, message) {
+  if (company.value.trim() === "") {
+    addError(company, message.enseigne);
+    return false;
+  } else {
+    removeError(company);
+  }
+  return true;
+}
+
+// Vérifie zip
+function checkZip(zip, message) {
+  if (!zip.value.match(regexZip)) {
+    addError(zip, message.zip);
+    return false;
+  } else {
+    removeError(zip);
+  }
+  return true;
+}
+
+// Vérifie phone
+function checkPhone(phone, message) {
+  if (!phone.value.match(regexPhone)) {
+    addError(phone, message.phone);
+    return false;
+  } else {
+    removeError(phone);
+  }
+  return true;
+}
+
+// Vérifie consentement
+function checkConsentement(consentement, message) {
+  if (!consentement.checked) {
+    addError(consentement, message.consentement);
+    return false;
+  } else {
+    removeError(consentement);
+  }
+  return true;
+}
+
+// Ajoute un événement aux inputs du formulaire
+document.getElementById("lastname").addEventListener('change', () => { checkLastName(document.getElementById("lastname"), message) });
+document.getElementById("firstname").addEventListener('change', () => { checkFirstName(document.getElementById("firstname"), message) });
+document.getElementById("email").addEventListener('change', () => { checkEmail(document.getElementById("email"), message) });
+document.getElementById("company").addEventListener('change', () => { checkCompany(document.getElementById("company"), message) });
+document.getElementById("zip").addEventListener('change', () => { checkZip(document.getElementById("zip"), message) });
+document.getElementById("phone").addEventListener('change', () => { checkPhone(document.getElementById("phone"), message) });
+document.getElementById("consentement").addEventListener('change', () => { checkConsentement(document.getElementById("consentement"), message) });
+
+// Ajoute un événement au submit du formulaire
+document.getElementById("formulaire").addEventListener("submit", function (event) {
+  event.preventDefault();
+
+  const lastname = document.getElementById("lastname");
+  const firstname = document.getElementById("firstname");
+  const company = document.getElementById("company");
+  const zip = document.getElementById("zip");
+  const email = document.getElementById("email");
+  const phone = document.getElementById("phone");
+  const consentement = document.getElementById("consentement");
+
+  const isCheckedLastName = checkLastName(lastname, message);
+  const isCheckedFirstName = checkFirstName(firstname, message);
+  const isCheckedEmail = checkEmail(email, message);
+  const isCheckedCompany = checkCompany(company, message);
+  const isCheckedZip = checkZip(zip, message);
+  const isCheckedPhone = checkPhone(phone, message);
+  const isCheckedConsentement = checkConsentement(consentement, message);
+
+  if (isCheckedLastName && isCheckedFirstName && isCheckedEmail && isCheckedCompany && isCheckedZip && isCheckedPhone && isCheckedConsentement) {
     var url = `https://plateforme.wemadeya.fr/api/submit-form`;
 
     const formData = {
-      lastname: document.getElementById("lastname").value,
-      firstname: document.getElementById("firstname").value,
-      company: document.getElementById("company").value,
-      zip: document.getElementById("zip").value,
-      email: document.getElementById("email").value,
-      phone: document.getElementById("phone").value,
-      consentement: document.getElementById("consentement").checked ? "true" : "false"
+      lastname: lastname.value,
+      firstname: firstname.value,
+      company: company.value,
+      zip: zip.value,
+      email: email.value,
+      phone: phone.value,
+      consentement: consentement.checked ? "true" : "false"
     };
 
     fetch(url, {
@@ -513,11 +648,16 @@ document
         "Content-Type": "application/json",
       },
     })
-      .then((response) => response.json())
-      .then((data) => {
-        alert(data.message);
-      })
-      .catch((error) => {
-        console.error("Erreur:", error);
-      });
-  });
+    .then((response) => response.json())
+    .then((data) => {
+      alert(data.message);
+      hideForm();
+      document.getElementById("formulaire").reset();
+    })
+    .catch((error) => {
+      console.error("Erreur:", error);
+    });
+  } else {
+    document.getElementById("error-message").style.display = "block";
+  }
+});
