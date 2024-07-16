@@ -75,35 +75,42 @@
                                 <div class="flex-col">
                                     <label for="lastname">Nom</label>
                                     <input autocomplete="off" type="text" id="lastname" name="lastname" placeholder="ex: Dupont" autocomplete="off">
+                                    <div class="error-message" id="error-lastname"></div>
                                 </div>
                                 <div class="flex-col">
                                     <label for="firstname">Prénom</label>
                                     <input autocomplete="off" type="text" id="firstname" name="firstname" placeholder="ex: Jean" autocomplete="off">
+                                    <div class="error-message" id="error-firstname"></div>
                                 </div>
                                 <div class="flex-col">
                                     <label for="company">Enseigne</label>
                                     <input autocomplete="off" type="text" id="company" name="company" placeholder="ex: intersport" autocomplete="off">
+                                    <div class="error-message" id="error-company"></div>
                                 </div>
                                 <div class="flex-col">
                                     <label for="zip">Code postal</label>
                                     <input autocomplete="off" type="number" id="zip" name="zip" placeholder="ex: 69008" autocomplete="off">
+                                    <div class="error-message" id="error-zip"></div>
                                 </div>
                                 <div class="flex-col">
                                     <label for="email">Email</label>
                                     <input autocomplete="off" type="email" id="email" name="email" placeholder="ex: paul@gmail.com" autocomplete="off">
+                                    <div class="error-message" id="error-email"></div>
                                 </div>                                            
                                 <div class="flex-col">
                                     <label for="phone">Téléphone</label>
-                                    <input autocomplete="off" type="tel" id="phone" name="phone" placeholder="ex: 02 04 15 65 84" autocomplete="off">
+                                    <input autocomplete="off" type="tel" id="phone" name="phone" placeholder="ex: 02 04 15 65 84" pattern="[0-9]{10}" inputmode="numeric" autocomplete="off">
+                                    <div class="error-message" id="error-phone"></div>
                                 </div>
                             </div>
                             <div>
                                 <label>
                                     <input type="checkbox" name="consentement" id="consentement">
                                     J'accepte que mes données soient collectées et utilisées conformément à la politique de confidentialité.
+                                    <div class="error-message" id="error-consentement"></div>
                                 </label>
                              </div>
-                            <input id="devis" class="devis" type="submit" value="Demander un devis" onclick="hideForm()">
+                            <input id="devis" class="devis" type="submit" value="Demander un devis">
                         </form>
                     </div>
                 </div>
@@ -123,3 +130,4 @@
     <!-- End Google Tag Manager (noscript) -->
 </body>
 </html>
+
