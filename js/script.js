@@ -650,7 +650,7 @@ document.getElementById("formulaire").addEventListener("submit", function (event
     })
     .then((response) => response.json())
     .then((data) => {
-      alert(data.message);
+      showPopup(data.message);
       hideForm();
       document.getElementById("formulaire").reset();
     })
@@ -661,3 +661,14 @@ document.getElementById("formulaire").addEventListener("submit", function (event
     document.getElementById("error-message").style.display = "block";
   }
 });
+
+function showPopup(message) {
+  document.getElementById("popupContent").innerText = message;
+  document.getElementById("popupOverlay").style.display = "block";
+  document.getElementById("popupMessage").style.display = "block";
+}
+
+function closePopup() {
+  document.getElementById("popupOverlay").style.display = "none";
+  document.getElementById("popupMessage").style.display = "none";
+}
