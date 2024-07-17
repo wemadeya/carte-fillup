@@ -650,7 +650,8 @@ document.getElementById("formulaire").addEventListener("submit", function (event
     })
     .then((response) => response.json())
     .then((data) => {
-      showPopup(data.message);
+      console.log("Success:", data);
+      showPopup("Merci de l’intérêt que vous portez pour nos services ! Nous avons bien reçu votre demande de devis et reviendrons vers vous dans les plus brefs délais.");
       hideForm();
       document.getElementById("formulaire").reset();
     })
