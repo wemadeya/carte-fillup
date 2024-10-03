@@ -138,9 +138,11 @@ async function initMap() {
       if (window.innerWidth <= 768) {
         const mobileCard = document.querySelector(".mobile_card");
         const maskMap = document.querySelector(".mask_map");
+        const settings = document.querySelector(".settings");
 
         mobileCard.innerHTML = card;
-        mobileCard.classList.add("anim-y");
+        mobileCard.style.display = "block";
+        settings.style.display = "none";
         maskMap.classList.add("anim-mask_map");
 
         // Écouter les événements mousedown
@@ -151,6 +153,8 @@ async function initMap() {
             event.target.closest(".mask_map")
           ) {
             mobileCard.classList.remove("anim-y");
+            mobileCard.style.display = "none";
+            settings.style.display = "block";
             maskMap.classList.remove("anim-mask_map");
           }
         });
@@ -392,25 +396,7 @@ map.on("mouseleave", "center-point", function () {
   map.getCanvas().style.cursor = "";
 });
 
-// Fonction qui ajuste le `top` de .settings.formulaire dynamiquement
-function adjustFormPosition() {
-  const element = document.querySelector(".settings.formulaire");
-  if (!element || !dynamicPositionEnabled) return;
-
-  if (window.innerWidth <= 550) {
-    element.style.top = "100%";
-    element.style.transform = "translateY(-100%)";
-  } else if (window.innerWidth <= 768) {
-    element.style.top = "100%";
-    element.style.transform = "translateY(-100%)";
-  } else {
-    element.style.top = "105%";
-    element.style.transform = "translateY(0%)";
-  }
-}
-
-
-// Fonction qui affiche le formulaire au clic sur le bouton "Rechercher"
+// Fonction qui affiche le formulaire au clic sur le bouton "Rechercher" en desktop
 function showForm() {
   const element = document.querySelector(".settings.formulaire");
   const searchvalue = document.getElementById("search");
@@ -425,7 +411,7 @@ function showForm() {
   }
 }
 
-// Fonction qui cache le formulaire au clic sur la croix
+// Fonction qui cache le formulaire au clic sur la croix en desktop
 function hideForm() {
   const element = document.querySelector(".settings.formulaire");
 
@@ -438,9 +424,9 @@ function hideForm() {
   }
 }
 
-//Fonction qui affiche le bouton devis
+//Fonction qui affiche le bouton devis en desktop
 function showDevisBtn() {
-  const element = document.getElementById("button-mobile");
+  const element = document.getElementById("searchAdress-mobile");
   const searchvalue = document.getElementById("search");
 
   if (element && searchvalue && searchvalue.value !== "") {
@@ -451,45 +437,39 @@ function showDevisBtn() {
 //Fonction qui affiche le formulaire en mobile
 function showDevis() {
   const element = document.querySelector(".settings.formulaire");
+  const settings = document.querySelector(".settings");
   const searchvalue = document.getElementById("search");
 
   if (element && searchvalue && searchvalue.value !== "") {
-    element.style.opacity = "1";
-    enableDynamicPosition();
+    element.style.display = "block";
+    settings.style.display = "none";
   }
 }
 
 //Fonction qui cache le formulaire en mobile avec le bouton dans le marqueur
 function showDevisMarker() {
   const element = document.querySelector(".settings.formulaire");
+  const settings = document.querySelector(".settings");
   const mobileCard = document.querySelector(".mobile_card");
   const maskMap = document.querySelector(".mask_map");
 
   if (element) {
-    mobileCard.classList.remove("anim-y");
+    settings.style.display = "none";
+    mobileCard.style.display = "none";
     maskMap.classList.remove("anim-mask_map");
-    element.style.opacity = "1";
-    enableDynamicPosition();
+    element.style.display = "block";
   }
 }
 
 function hideFormMobile() {
   const element = document.querySelector(".settings.formulaire");
+  const settings = document.querySelector(".settings");
 
   if (element) {
-    element.style.top = "105%";
-    element.style.opacity = "0";
-    dynamicPositionEnabled = false;
+    element.style.display = "none";
+    settings.style.display = "block";
   }
 }
-
-// Réactiver le comportement dynamique lors de l'ouverture à nouveau
-function enableDynamicPosition() {
-  dynamicPositionEnabled = true;
-  adjustFormPosition();
-}
-window.addEventListener("resize", adjustFormPosition);
-
 
 const message = {
   name: "Le champ doit contenir au moins 2 caractères.",

@@ -249,7 +249,6 @@ input[type=range]::-webkit-slider-thumb {
 
 /*formulaire*/
 .settings.formulaire {
-    position: absolute;
     width: 100%;
     z-index: 800;
     padding: 0;
@@ -491,15 +490,11 @@ input[type=range]::-webkit-slider-thumb {
 .mobile_card {
     border-radius: 20px 20px 0px 0px;
     background: #FFF;
-    position: absolute;
-    top: 100%;
     width: 100%;
-    left: 0;
     height: max-content;
-    z-index: 999;
-    transform: translate(0%, 0%);
-    transition: 0.2s ease-out;
     display: none;
+    position: absolute;
+    bottom: 0;
 }
 
 .anim-y {
@@ -715,7 +710,6 @@ input[type=range]::-webkit-slider-thumb {
         top: 105%;
         z-index: 999;
         opacity: 1;
-        display: block;
     }
 
     .croix {
@@ -723,10 +717,6 @@ input[type=range]::-webkit-slider-thumb {
     }
 
     .croix-mobile {
-        display: block;
-    }
-
-    .mobile_card {
         display: block;
     }
 
