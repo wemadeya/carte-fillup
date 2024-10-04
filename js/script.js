@@ -139,10 +139,12 @@ async function initMap() {
         const mobileCard = document.querySelector(".mobile_card");
         const maskMap = document.querySelector(".mask_map");
         const settings = document.querySelector(".settings");
+        const form = document.querySelector(".settings.formulaire");
 
         mobileCard.innerHTML = card;
         mobileCard.style.display = "block";
         settings.style.display = "none";
+        form.style.display = "none"; 
         maskMap.classList.add("anim-mask_map");
 
         // Écouter les événements mousedown
