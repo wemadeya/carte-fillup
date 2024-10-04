@@ -634,6 +634,7 @@ document.getElementById("formulaire").addEventListener("submit", function (event
       showPopup("Merci de l’intérêt que vous portez pour nos services ! Nous avons bien reçu votre demande de devis et reviendrons vers vous dans les plus brefs délais.");
       hideForm();
       document.getElementById("formulaire").reset();
+      document.querySelector("settings").style.display = "block";
     })
     .catch((error) => {
       console.error("Erreur:", error);
