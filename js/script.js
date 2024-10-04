@@ -633,6 +633,7 @@ document.getElementById("formulaire").addEventListener("submit", function (event
       console.log("Success:", data);
       showPopup("Merci de l’intérêt que vous portez pour nos services ! Nous avons bien reçu votre demande de devis et reviendrons vers vous dans les plus brefs délais.");
       hideForm();
+      mainBlock();
       document.getElementById("formulaire").reset();
     })
     .catch((error) => {
@@ -654,6 +655,6 @@ function closePopup() {
   document.getElementById("popupMessage").style.display = "none";
 }
 
-document.getElementById("devis").addEventListener("click", function () {
-  document.querySelector("settings").style.display = "block";
-});
+function mainBlock() {
+  document.querySelector(".settings").style.display = "block";
+}
