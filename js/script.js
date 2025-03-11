@@ -1,20 +1,214 @@
 //Déclaration de valeurs
-var circle;
-let dynamicPositionEnabled = true;
+let circle;
 
 mapboxgl.accessToken =
   "pk.eyJ1Ijoid2VtYWRleWEiLCJhIjoiY2xzYzI2cXJwMDg2eTJtbWhnZGt0NHEwMiJ9.wa4jCE_DBLiNKSuNUTOpHQ";
 
-function isMobileDevice() {
-  return /Mobi|Android/i.test(navigator.userAgent);
-}
-
-var map = new mapboxgl.Map({
+const map = new mapboxgl.Map({
   container: "map",
   style: "mapbox://styles/wemadeya/clqcioya500b201qr8m6v1wsr",
   center: [2.339294, 46.8],
-  zoom: 5, 
+  zoom: 5,
 });
+
+// Gestion des cookies
+document.addEventListener('DOMContentLoaded', function() {
+  const cookieSettingsButton = document.getElementById("cookie-settings-button");
+
+  function createMapBlocker() {
+    const mapBlocker = document.createElement("div");
+    mapBlocker.id = "map-blocker";
+    mapBlocker.innerHTML = `
+      <div class="map-blocker-content">
+        <img src="https://fillupmedia.fr/wp-content/uploads/2022/11/cropped-logo-light.png" alt="Logo" class="logo-cookie">
+        <h2>Bienvenue sur notre carte interactive</h2>
+        <p>Pour accéder à cette carte, nous utilisons des cookies nécessaires à son bon fonctionnement.</p>
+        <p>Vous pouvez personnaliser vos préférences ou accepter tous les cookies pour une expérience optimale.</p>
+        <div class="map-blocker-buttons">
+          <button id="accept-from-blocker" class="btn-primary">Accepter tous les cookies</button>
+          <button id="preferences-from-blocker" class="btn-outline">Personnaliser mes préférences</button>
+          <button id="reject-from-blocker" class="btn-secondary">Refuser</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(mapBlocker);
+
+    document.getElementById("accept-from-blocker").addEventListener("click", acceptCookies);
+    document.getElementById("reject-from-blocker").addEventListener("click", rejectCookies);
+    document.getElementById("preferences-from-blocker").addEventListener("click", openCookiePreferences);
+
+    return mapBlocker;
+  }
+
+  function showRefusalMessage() {
+    const mapBlocker = document.getElementById("map-blocker") || createMapBlocker();
+    mapBlocker.querySelector(".map-blocker-content").innerHTML = `
+      <h2>Carte non disponible</h2>
+      <p>Vous avez refusé les cookies nécessaires à l'affichage de la carte.</p>
+      <p>Pour voir la carte, veuillez accepter les cookies.</p>
+      <button id="reset-cookies" class="btn-primary">Modifier mes préférences</button>
+    `;
+
+    document.getElementById("reset-cookies").addEventListener("click", function() {
+      localStorage.removeItem("cookiesAccepted");
+      localStorage.removeItem("cookiePreferences");
+      location.reload();
+    });
+  }
+
+  function initCookiePreferences() {
+    const cookiePreferences = JSON.parse(localStorage.getItem("cookiePreferences")) || {
+      essential: true,
+      analytics: false,
+      marketing: false
+    };
+
+    if (document.getElementById("cookie-essential")) {
+      document.getElementById("cookie-essential").checked = cookiePreferences.essential;
+    }
+    if (document.getElementById("cookie-analytics")) {
+      document.getElementById("cookie-analytics").checked = cookiePreferences.analytics;
+    }
+    if (document.getElementById("cookie-marketing")) {
+      document.getElementById("cookie-marketing").checked = cookiePreferences.marketing;
+    }
+
+    return cookiePreferences;
+  }
+
+  if (localStorage.getItem("cookiesAccepted") === null) {
+    createMapBlocker();
+  } else if (localStorage.getItem("cookiesAccepted") === "true") {
+    loadGoogleTags();
+    initMap();
+    cookieSettingsButton.style.display = "flex";
+  } else {
+    showRefusalMessage();
+  }
+
+  cookieSettingsButton?.addEventListener("click", openCookiePreferences);
+
+  initCookiePreferences();
+});
+
+function openCookiePreferences() {
+  const modal = document.getElementById("cookie-preferences-modal");
+  modal.style.display = "flex";
+
+  const cookiePreferences = JSON.parse(localStorage.getItem("cookiePreferences")) || {
+    essential: true,
+    analytics: false,
+    marketing: false
+  };
+
+  document.getElementById("cookie-essential").checked = cookiePreferences.essential;
+  document.getElementById("cookie-analytics").checked = cookiePreferences.analytics;
+  document.getElementById("cookie-marketing").checked = cookiePreferences.marketing;
+}
+
+function closeCookiePreferences() {
+  document.getElementById("cookie-preferences-modal").style.display = "none";
+}
+
+function saveCookiePreferences() {
+  const cookiePreferences = {
+    essential: true,
+    analytics: document.getElementById("cookie-analytics").checked,
+    marketing: document.getElementById("cookie-marketing").checked
+  };
+
+  localStorage.setItem("cookiePreferences", JSON.stringify(cookiePreferences));
+  localStorage.setItem("cookiesAccepted", "true");
+
+  updateGoogleConsent(cookiePreferences);
+
+  closeCookiePreferences();
+
+  const mapBlocker = document.getElementById("map-blocker");
+  if (mapBlocker) {
+    mapBlocker.remove();
+  }
+
+  document.getElementById("cookie-settings-button").style.display = "flex";
+
+  loadGoogleTags();
+  initMap();
+}
+
+function acceptCookies() {
+  const cookiePreferences = {
+    essential: true,
+    analytics: true,
+    marketing: true
+  };
+
+  localStorage.setItem("cookiePreferences", JSON.stringify(cookiePreferences));
+  localStorage.setItem("cookiesAccepted", "true");
+
+  const mapBlocker = document.getElementById("map-blocker");
+  if (mapBlocker) {
+    mapBlocker.remove();
+  }
+
+  document.getElementById("cookie-settings-button").style.display = "flex";
+
+  updateGoogleConsent(cookiePreferences);
+
+  loadGoogleTags();
+  initMap();
+}
+
+function rejectCookies() {
+  const cookiePreferences = {
+    essential: true,
+    analytics: false,
+    marketing: false
+  };
+
+  localStorage.setItem("cookiePreferences", JSON.stringify(cookiePreferences));
+  localStorage.setItem("cookiesAccepted", "false");
+
+  const mapBlocker = document.getElementById("map-blocker");
+  if (mapBlocker) {
+    mapBlocker.querySelector(".map-blocker-content").innerHTML = `
+      <h2>Carte non disponible</h2>
+      <p>Vous avez refusé les cookies nécessaires à l'affichage de la carte.</p>
+      <p>Pour voir la carte, veuillez accepter les cookies.</p>
+      <button id="reset-cookies" class="btn-primary">Modifier mes préférences</button>
+    `;
+
+    document.getElementById("reset-cookies").addEventListener("click", function() {
+      localStorage.removeItem("cookiesAccepted");
+      localStorage.removeItem("cookiePreferences");
+      location.reload();
+    });
+  }
+}
+
+function updateGoogleConsent(preferences) {
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'update', {
+    'ad_storage': preferences.marketing ? 'granted' : 'denied',
+    'analytics_storage': preferences.analytics ? 'granted' : 'denied',
+    'ad_user_data': preferences.marketing ? 'granted' : 'denied',
+    'ad_personalization': preferences.marketing ? 'granted' : 'denied'
+  });
+}
+
+function loadGoogleTags() {
+  if (localStorage.getItem("cookiesAccepted") === "true") {
+    let gtmScript = document.createElement("script");
+    gtmScript.src = "https://www.googletagmanager.com/gtag/js?id=G-VLY31TFTPC";
+    gtmScript.async = true;
+    document.head.appendChild(gtmScript);
+
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VLY31TFTPC');
+  }
+}
 
 // Si l'utilisateur est sur un appareil mobile, ajuster le zoom
 if (isMobileDevice()) {
@@ -26,8 +220,7 @@ async function fetchStations() {
   try {
     const apiUrl = `https://plateforme.wemadeya.fr/api/stations`; 
     const response = await fetch(apiUrl);
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (error) {
     console.error("Erreur lors de la récupération des données :", error);
   }
@@ -202,20 +395,20 @@ window.onload = function () {
 
 //fonction pour chercher une adresse et mettre à jour la carte
 function findLocationAndUpdateMap() {
-  var address = document.getElementById("search").value;
-  var radius = document.getElementById("distance").value;
+  const address = document.getElementById("search").value;
+  const radius = document.getElementById("distance").value;
 
-  var geocodeUrl =
-    "https://nominatim.openstreetmap.org/search.php?q=" +
-    encodeURIComponent(address) +
-    "&format=jsonv2";
+  const geocodeUrl =
+      "https://nominatim.openstreetmap.org/search.php?q=" +
+      encodeURIComponent(address) +
+      "&format=jsonv2";
 
   fetch(geocodeUrl)
     .then((response) => response.json())
     .then((data) => {
       if (data.length > 0) {
-        var lat = parseFloat(data[0].lat);
-        var lon = parseFloat(data[0].lon);
+        const lat = parseFloat(data[0].lat);
+        const lon = parseFloat(data[0].lon);
 
         updateMapWithStations(lat, lon, radius);
       } else {
@@ -247,7 +440,7 @@ function updateMapWithStations(lat, lon, radius) {
     map.removeSource("center-point");
   }
 
-  var radiusInMeters = radius * 1000;
+  const radiusInMeters = radius * 1000;
 
   // Ajoutez une source et un layer pour le cercle
   map.addSource("circle", {
@@ -311,8 +504,8 @@ function updateMapWithStations(lat, lon, radius) {
   });
 
   // Ajuster le zoom et le centre de la carte pour inclure le cercle entièrement
-  var bounds = calculateBounds([lon, lat], radiusInMeters);
-  var fitOptions = { padding: 50 };
+  const bounds = calculateBounds([lon, lat], radiusInMeters);
+  const fitOptions = {padding: 50};
 
   if (isMobileDevice()) {
     fitOptions.padding = 100;
@@ -336,25 +529,25 @@ function calculateBounds(center, radius) {
 
 // Fonction pour afficher une suggestion d'adresses
 function suggestAddress() {
-  var query = document.getElementById("search").value;
+  const query = document.getElementById("search").value;
   if (query.length < 3) {
     // Déclecher la recherche uniquement si l'utilisateur a saisi au moins 3 caractères
     document.getElementById("addressSuggestions").style.display = "none";
     return;
   }
 
-  var url = `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(
-    query
+  const url = `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(
+      query
   )}&limit=5&autocomplete=1`;
 
   fetch(url)
     .then((response) => response.json())
     .then((data) => {
-      var suggestions = data.features;
-      var suggestionsContainer = document.getElementById("addressSuggestions");
+      const suggestions = data.features;
+      const suggestionsContainer = document.getElementById("addressSuggestions");
       suggestionsContainer.innerHTML = "";
       suggestions.forEach((suggestion) => {
-        var div = document.createElement("div");
+        const div = document.createElement("div");
         div.innerHTML = suggestion.properties.label;
         div.className = "suggestion-item";
         div.onclick = function () {
@@ -383,8 +576,8 @@ document.onclick = function (e) {
 
 // afficher une popup lorsqu'on clique sur le point central
 map.on("click", "center-point", function (e) {
-  var coordinates = e.features[0].geometry.coordinates.slice();
-  var description = "<span class='popup'>Vous êtes ici</span>";
+  const coordinates = e.features[0].geometry.coordinates.slice();
+  const description = "<span class='popup'>Vous êtes ici</span>";
 
   new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
 });
@@ -611,7 +804,7 @@ document.getElementById("formulaire").addEventListener("submit", function (event
   const isCheckedConsentement = checkConsentement(consentement, message);
 
   if (isCheckedLastName && isCheckedFirstName && isCheckedEmail && isCheckedCompany && isCheckedZip && isCheckedPhone && isCheckedConsentement) {
-    var url = `https://plateforme.wemadeya.fr/api/submit-form`;
+    const url = `https://plateforme.wemadeya.fr/api/submit-form`;
 
     const formData = {
       lastname: lastname.value,

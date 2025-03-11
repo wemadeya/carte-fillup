@@ -32,7 +32,7 @@
     <!-- End Google Tag Manager (noscript) -->    
     <header>
         <a href="https://fillupmedia.fr" class="back-cta">
-            <img class="arrow" src="./assets/arrow-left-solid.svg"></img>
+            <img class="arrow" src="./assets/arrow-left-solid.svg" alt="fleche" />
             <p class="back-text">retourner sur le site</p>
             <p class="back-text-mobile">Retour</p>
         </a>
@@ -52,7 +52,7 @@
                     <form class="form" onsubmit="event.preventDefault(); findLocationAndUpdateMap();">
                         <div class="flex-col">
                             <div class="label">
-                                <img src="./assets/ponter-black.svg">
+                                <img src="./assets/ponter-black.svg" alt="pointer" />
                                 <label for="search">Adresse de votre établissement</label>    
                             </div>
                             
@@ -61,7 +61,7 @@
                         </div>
                         <div class="flex-col">
                             <div class="label">
-                                <img src="./assets/target.svg">
+                                <img src="./assets/target.svg" alt="cible"/>
                                 <label for="distance">Rayon de diffusion (en km)</label>    
                             </div>
                             <div class="range">
@@ -79,41 +79,41 @@
                 <div class="settings formulaire">
                     <div class="form-container">
                         <div class="croix" onclick="hideForm()">
-                            <img src="./assets/xmark.svg"></img>
+                            <img src="./assets/xmark.svg" alt="croix" />
                         </div>
                         <div class="croix-mobile" onclick="hideFormMobile()">
-                            <img src="./assets/xmark.svg"></img>
+                            <img src="./assets/xmark.svg" alt="croix" />
                         </div>
                         <form class="form-content" id="formulaire" action="">
                             <div class="form row">
                                 <div class="flex-col">
                                     <label for="lastname">Nom</label>
-                                    <input autocomplete="off" type="text" id="lastname" name="lastname" placeholder="ex: Dupont" autocomplete="off">
+                                    <input type="text" id="lastname" name="lastname" placeholder="ex: Dupont" autocomplete="off">
                                     <div class="error-message" id="error-lastname"></div>
                                 </div>
                                 <div class="flex-col">
                                     <label for="firstname">Prénom</label>
-                                    <input autocomplete="off" type="text" id="firstname" name="firstname" placeholder="ex: Jean" autocomplete="off">
+                                    <input type="text" id="firstname" name="firstname" placeholder="ex: Jean" autocomplete="off">
                                     <div class="error-message" id="error-firstname"></div>
                                 </div>
                                 <div class="flex-col">
                                     <label for="company">Enseigne</label>
-                                    <input autocomplete="off" type="text" id="company" name="company" placeholder="ex: intersport" autocomplete="off">
+                                    <input type="text" id="company" name="company" placeholder="ex: intersport" autocomplete="off">
                                     <div class="error-message" id="error-company"></div>
                                 </div>
                                 <div class="flex-col">
                                     <label for="zip">Code postal</label>
-                                    <input autocomplete="off" type="number" id="zip" name="zip" placeholder="ex: 69008" autocomplete="off">
+                                    <input type="number" id="zip" name="zip" placeholder="ex: 69008" autocomplete="off">
                                     <div class="error-message" id="error-zip"></div>
                                 </div>
                                 <div class="flex-col">
                                     <label for="email">Email</label>
-                                    <input autocomplete="off" type="email" id="email" name="email" placeholder="ex: paul@gmail.com" autocomplete="off">
+                                    <input type="email" id="email" name="email" placeholder="ex: paul@gmail.com" autocomplete="off">
                                     <div class="error-message" id="error-email"></div>
                                 </div>                                            
                                 <div class="flex-col">
                                     <label for="phone">Téléphone</label>
-                                    <input autocomplete="off" type="tel" id="phone" name="phone" placeholder="ex: 02 04 15 65 84" pattern="[0-9]{10}" inputmode="numeric" autocomplete="off">
+                                    <input type="tel" id="phone" name="phone" placeholder="ex: 02 04 15 65 84" pattern="[0-9]{10}" inputmode="numeric" autocomplete="off">
                                     <div class="error-message" id="error-phone"></div>
                                 </div>
                             </div>
@@ -121,7 +121,7 @@
                                 <label>
                                     <input type="checkbox" name="consentement" id="consentement">
                                     J'accepte que mes données soient collectées et utilisées conformément à la politique de confidentialité.
-                                    <div class="error-message" id="error-consentement"></div>
+                                    <span class="error-message" id="error-consentement"></span>
                                 </label>
                              </div>
                             <input id="devis" class="devis" type="submit" value="Demander un devis">
@@ -132,8 +132,62 @@
         </div> 
         <div id="map"></div>
         <div class="mask_map"></div>
-        <div class="mobile_card"></div> 
+        <div class="mobile_card"></div>
     </main>
+
+    <!-- Bouton flottant pour afficher les paramètres de cookies -->
+    <div id="cookie-settings-button">
+        <img src="./assets/cookie-icon.svg" alt="Paramètres cookies">
+    </div>
+
+    <!-- Modal des préférences de cookies -->
+    <div id="cookie-preferences-modal">
+        <div class="cookie-preferences-content">
+            <div class="cookie-preferences-header">
+                <h2>Paramètres des cookies</h2>
+                <button class="close-modal" onclick="closeCookiePreferences()">×</button>
+            </div>
+            <div class="cookie-preferences-body">
+                <p>Personnalisez vos préférences en matière de cookies :</p>
+
+                <div class="cookie-option">
+                    <label class="cookie-switch">
+                        <input type="checkbox" id="cookie-essential" checked disabled>
+                        <span class="cookie-slider"></span>
+                    </label>
+                    <div class="cookie-description">
+                        <h3>Cookies essentiels</h3>
+                        <p>Ces cookies sont nécessaires au bon fonctionnement du site et ne peuvent pas être désactivés.</p>
+                    </div>
+                </div>
+
+                <div class="cookie-option">
+                    <label class="cookie-switch">
+                        <input type="checkbox" id="cookie-analytics">
+                        <span class="cookie-slider"></span>
+                    </label>
+                    <div class="cookie-description">
+                        <h3>Cookies d'analyse</h3>
+                        <p>Ces cookies nous permettent de mesurer l'audience et d'analyser votre navigation pour améliorer notre site.</p>
+                    </div>
+                </div>
+
+                <div class="cookie-option">
+                    <label class="cookie-switch">
+                        <input type="checkbox" id="cookie-marketing">
+                        <span class="cookie-slider"></span>
+                    </label>
+                    <div class="cookie-description">
+                        <h3>Cookies marketing</h3>
+                        <p>Ces cookies nous permettent de vous proposer des offres personnalisées et des publicités pertinentes.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="cookie-preferences-footer">
+                <button onclick="saveCookiePreferences()" class="btn-save-preferences">Enregistrer mes préférences</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Popup -->
     <div class="popup-overlay" id="popupOverlay"></div>

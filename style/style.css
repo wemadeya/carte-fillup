@@ -35,11 +35,10 @@
 
 body {
     margin: 0;
-    padding: 0;
     overflow: hidden;
     font-family: 'Satoshi', sans-serif;
     font-size: 14px;
-    padding-bottom: env(safe-area-inset-bottom);
+    padding: 0 0 env(safe-area-inset-bottom);
 }
 
 header {
@@ -49,7 +48,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0px 100px;
+    padding: 0 100px;
     background-color: #011c34;
     height: 8vh;
 }
@@ -273,7 +272,6 @@ input[type=range]::-webkit-slider-thumb {
     flex-direction: row;
     gap: 10px;
     flex-wrap: wrap;
-    justify-content: flex;
 }
 
 .error-message {
@@ -362,7 +360,7 @@ input[type=range]::-webkit-slider-thumb {
     color: black;
     font-size: 14px;
     font-family: 'Inter', sans-serif;
-    box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.50);
+    box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.50);
     border-radius: 10px;
 }
 
@@ -382,7 +380,7 @@ input[type=range]::-webkit-slider-thumb {
     flex-direction: column;
     gap: 20px;
     background-color: #fff;
-    box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.50);
+    box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.50);
     border-radius: 10px;
 }
 
@@ -401,7 +399,7 @@ input[type=range]::-webkit-slider-thumb {
     border-radius: 5px;
     background: rgba(0, 0, 0, 0.08);
     font-weight: 700;
-    font-family: 16px;
+    font-size: 16px;
 }
 
 .card_content div p {
@@ -488,7 +486,7 @@ input[type=range]::-webkit-slider-thumb {
 }
 
 .mobile_card {
-    border-radius: 20px 20px 0px 0px;
+    border-radius: 20px 20px 0 0;
     background: #FFF;
     width: 100%;
     height: max-content;
@@ -607,11 +605,338 @@ input[type=range]::-webkit-slider-thumb {
 }
 
 /*
+ * cookies
+ */
+.btn-primary {
+    background-color: #4DBDC6;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: #3ca8b0;
+}
+
+.btn-secondary {
+    background-color: #f1f1f1;
+    color: #333;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #e1e1e1;
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: #333;
+    padding: 9px 19px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-outline:hover {
+    background-color: #f5f5f5;
+}
+
+/* Bouton flottant pour les paramètres de cookies */
+#cookie-settings-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: #fff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 9000;
+    transition: transform 0.3s ease;
+}
+
+#cookie-settings-button:hover {
+    transform: scale(1.1);
+}
+
+#cookie-settings-button img {
+    width: 30px;
+    height: 30px;
+}
+
+#map-blocker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 800;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+}
+
+.map-blocker-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    max-width: 500px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.map-blocker-content h2 {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.map-blocker-content p {
+    margin-bottom: 15px;
+    color: #555;
+    line-height: 1.5;
+}
+
+.map-blocker-buttons {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.btn-primary {
+    background-color: #4DBDC6;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-secondary {
+    background-color: #f1f1f1;
+    color: #333;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.logo-cookie {
+    max-width: 150px;
+    margin-bottom: 10px;
+}
+
+#cookie-preferences-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 10000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(3px);
+}
+
+.cookie-preferences-content {
+    background-color: white;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.cookie-preferences-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.cookie-preferences-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    color: #333;
+}
+
+.close-modal {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #777;
+}
+
+.cookie-preferences-body {
+    padding: 20px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.cookie-option {
+    display: flex;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.cookie-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.cookie-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.cookie-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.cookie-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .cookie-slider {
+    background-color: #4DBDC6;
+}
+
+input:disabled + .cookie-slider {
+    background-color: #4DBDC6;
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+input:checked + .cookie-slider:before {
+    transform: translateX(26px);
+}
+
+.cookie-description {
+    flex: 1;
+}
+
+.cookie-description h3 {
+    margin-top: 0;
+    margin-bottom: 5px;
+    font-size: 1rem;
+    color: #333;
+}
+
+.cookie-description p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.cookie-preferences-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #eee;
+    text-align: right;
+}
+
+.btn-save-preferences {
+    background-color: #4DBDC6;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-save-preferences:hover {
+    background-color: #3ca8b0;
+}
+
+@media (max-width: 768px) {
+    .map-blocker-content {
+        width: 90%;
+        max-width: 400px;
+        padding: 20px;
+    }
+
+    .map-blocker-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn-primary, .btn-secondary, .btn-outline {
+        width: 100%;
+    }
+
+    #cookie-settings-button {
+        bottom: 10px;
+        right: 10px;
+        width: 40px;
+        height: 40px;
+    }
+
+    #cookie-settings-button img {
+        width: 24px;
+        height: 24px;
+    }
+
+    .cookie-option {
+        flex-direction: column;
+    }
+
+    .cookie-switch {
+        margin-bottom: 10px;
+    }
+}
+
+/*
  * responsive
  */
 @media (max-width: 1024px) {
     header {
-        padding: 0px 40px;
+        padding: 0 40px;
     }
 
     h1 {
@@ -665,10 +990,7 @@ input[type=range]::-webkit-slider-thumb {
     }
 
     .settings {
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
-        border-top-left-radius: 20px;
-        border-top-right-radius: 20px;
+        border-radius: 20px 20px 0 0;
     }
 
     /*boutons mobile*/
@@ -746,7 +1068,7 @@ input[type=range]::-webkit-slider-thumb {
 
 @media (max-width: 450px) {
     header {
-        padding: 0px 20px;
+        padding: 0 20px;
     }
 
     h1 {
