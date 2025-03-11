@@ -11,151 +11,129 @@ const map = new mapboxgl.Map({
   zoom: 5,
 });
 
+// Gestion des cookies
 document.addEventListener('DOMContentLoaded', function() {
   const cookieSettingsButton = document.getElementById("cookie-settings-button");
 
-  function createInitialConsentPopup() {
-    const consentPopup = document.createElement("div");
-    consentPopup.id = "cookie-consent-popup";
-    consentPopup.innerHTML = `
-      <div class="cookie-consent-content">
-        <h2>Bienvenue sur notre carte interactive</h2>
-        <p>Ce site utilise des cookies pour améliorer votre expérience et nous permettre d'analyser son utilisation.</p>
-        <p>Vous pouvez personnaliser vos préférences ou accepter tous les cookies pour une expérience optimale.</p>
-        <div class="cookie-consent-buttons">
-          <button id="accept-cookies" class="btn-primary">Accepter tous les cookies</button>
-          <button id="customize-cookies" class="btn-outline">Personnaliser mes préférences</button>
-          <button id="essential-only" class="btn-secondary">Cookies essentiels uniquement</button>
-        </div>
-      </div>
-    `;
-
-    document.body.appendChild(consentPopup);
-    document.getElementById("accept-cookies").addEventListener("click", acceptCookies);
-    document.getElementById("customize-cookies").addEventListener("click", openCookiePreferences);
-    document.getElementById("essential-only").addEventListener("click", essentialCookiesOnly);
-
-    return consentPopup;
-  }
-
-  function initCookiePreferences() {
-    const cookiePreferences = JSON.parse(localStorage.getItem("cookiePreferences")) || {
-      essential: true,
-      analytics: false,
-      marketing: false
-    };
-
-    if (document.getElementById("cookie-essential")) {
-      document.getElementById("cookie-essential").checked = cookiePreferences.essential;
-    }
-    if (document.getElementById("cookie-analytics")) {
-      document.getElementById("cookie-analytics").checked = cookiePreferences.analytics;
-    }
-    if (document.getElementById("cookie-marketing")) {
-      document.getElementById("cookie-marketing").checked = cookiePreferences.marketing;
-    }
-
-    return cookiePreferences;
+  if (cookieSettingsButton) {
+    cookieSettingsButton.style.display = "none";
   }
 
   if (localStorage.getItem("cookiesChoice") === null) {
-    createInitialConsentPopup();
+    createConsentUI();
   } else {
     initMap();
-
-    cookieSettingsButton.style.display = "flex";
-
-    const cookiePreferences = initCookiePreferences();
-    if (cookiePreferences.analytics || cookiePreferences.marketing) {
-      loadGoogleTags();
-    }
+    applyUserPreferences();
   }
 
   cookieSettingsButton?.addEventListener("click", openCookiePreferences);
 });
 
-function essentialCookiesOnly() {
-  const cookiePreferences = {
+function createConsentUI() {
+  const overlay = document.createElement("div");
+  overlay.className = "cookie-consent-overlay";
+
+  const consentPopup = document.createElement("div");
+  consentPopup.id = "cookie-consent-popup";
+  consentPopup.innerHTML = `
+    <div class="cookie-consent-content">
+      <h2>Bienvenue sur notre carte interactive</h2>
+      <p>Ce site utilise des cookies pour améliorer votre expérience et nous permettre d'analyser son utilisation.</p>
+      <p>Vous pouvez personnaliser vos préférences ou accepter tous les cookies pour une expérience optimale.</p>
+      <div class="cookie-consent-buttons">
+        <button id="accept-cookies" class="btn-primary">Tout accepter</button>
+        <button id="customize-cookies" class="btn-outline">Personnaliser mes préférences</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+  overlay.appendChild(consentPopup);
+
+  document.getElementById("accept-cookies").addEventListener("click", () => {
+    saveUserChoice({essential: true, analytics: true, marketing: true});
+  });
+
+  document.getElementById("customize-cookies").addEventListener("click", () => {
+    removeConsentUI();
+    openCookiePreferences();
+  });
+}
+
+function removeConsentUI() {
+  const overlay = document.querySelector(".cookie-consent-overlay");
+  if (overlay) {
+    overlay.remove();
+  }
+}
+
+function saveUserChoice(preferences) {
+  localStorage.setItem("cookiePreferences", JSON.stringify(preferences));
+  localStorage.setItem("cookiesChoice", "made");
+
+  removeConsentUI();
+
+  initMap();
+  applyUserPreferences();
+}
+
+function applyUserPreferences() {
+  const cookiePreferences = getUserPreferences();
+
+  const cookieSettingsButton = document.getElementById("cookie-settings-button");
+  if (cookieSettingsButton) {
+    cookieSettingsButton.style.display = "flex";
+  }
+
+  if (cookiePreferences.analytics || cookiePreferences.marketing) {
+    updateGoogleConsent(cookiePreferences);
+    loadGoogleTags();
+  }
+}
+
+function getUserPreferences() {
+  return JSON.parse(localStorage.getItem("cookiePreferences")) || {
     essential: true,
     analytics: false,
     marketing: false
   };
-
-  savePreferencesAndInit(cookiePreferences);
-}
-
-function acceptCookies() {
-  const cookiePreferences = {
-    essential: true,
-    analytics: true,
-    marketing: true
-  };
-
-  savePreferencesAndInit(cookiePreferences);
-}
-
-function savePreferencesAndInit(preferences) {
-  localStorage.setItem("cookiePreferences", JSON.stringify(preferences));
-  localStorage.setItem("cookiesChoice", "made");
-
-  const consentPopup = document.getElementById("cookie-consent-popup");
-  if (consentPopup) {
-    consentPopup.remove();
-  }
-
-  document.getElementById("cookie-settings-button").style.display = "flex";
-
-  initMap();
-
-  if (preferences.analytics || preferences.marketing) {
-    updateGoogleConsent(preferences);
-    loadGoogleTags();
-  }
 }
 
 function openCookiePreferences() {
   const modal = document.getElementById("cookie-preferences-modal");
+  if (!modal) return;
+
   modal.style.display = "flex";
 
-  const cookiePreferences = JSON.parse(localStorage.getItem("cookiePreferences")) || {
-    essential: true,
-    analytics: false,
-    marketing: false
-  };
+  const preferences = getUserPreferences();
 
-  document.getElementById("cookie-essential").checked = cookiePreferences.essential;
-  document.getElementById("cookie-analytics").checked = cookiePreferences.analytics;
-  document.getElementById("cookie-marketing").checked = cookiePreferences.marketing;
+  if (document.getElementById("cookie-essential")) {
+    document.getElementById("cookie-essential").checked = preferences.essential;
+  }
+  if (document.getElementById("cookie-analytics")) {
+    document.getElementById("cookie-analytics").checked = preferences.analytics;
+  }
+  if (document.getElementById("cookie-marketing")) {
+    document.getElementById("cookie-marketing").checked = preferences.marketing;
+  }
 }
 
 function closeCookiePreferences() {
-  document.getElementById("cookie-preferences-modal").style.display = "none";
+  const modal = document.getElementById("cookie-preferences-modal");
+  if (modal) {
+    modal.style.display = "none";
+  }
 }
 
 function saveCookiePreferences() {
-  const cookiePreferences = {
-    essential: true, // Toujours activé
-    analytics: document.getElementById("cookie-analytics").checked,
-    marketing: document.getElementById("cookie-marketing").checked
+  const preferences = {
+    essential: true,
+    analytics: document.getElementById("cookie-analytics")?.checked || false,
+    marketing: document.getElementById("cookie-marketing")?.checked || false
   };
 
-  localStorage.setItem("cookiePreferences", JSON.stringify(cookiePreferences));
-  localStorage.setItem("cookiesChoice", "made");
-
+  saveUserChoice(preferences);
   closeCookiePreferences();
-
-  const consentPopup = document.getElementById("cookie-consent-popup");
-  if (consentPopup) {
-    consentPopup.remove();
-  }
-
-  document.getElementById("cookie-settings-button").style.display = "flex";
-
-  updateGoogleConsent(cookiePreferences);
-
-  if (cookiePreferences.analytics || cookiePreferences.marketing) {
-    loadGoogleTags();
-  }
 }
 
 function updateGoogleConsent(preferences) {
@@ -171,7 +149,7 @@ function updateGoogleConsent(preferences) {
 
 function loadGoogleTags() {
   if (!document.querySelector('script[src*="googletagmanager.com/gtag/js"]')) {
-    let gtmScript = document.createElement("script");
+    const gtmScript = document.createElement("script");
     gtmScript.src = "https://www.googletagmanager.com/gtag/js?id=G-VLY31TFTPC";
     gtmScript.async = true;
     document.head.appendChild(gtmScript);
