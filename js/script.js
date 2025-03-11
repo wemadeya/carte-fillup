@@ -41,8 +41,8 @@ function createConsentUI() {
       <p>Ce site utilise des cookies pour améliorer votre expérience et nous permettre d'analyser son utilisation.</p>
       <p>Vous pouvez personnaliser vos préférences ou accepter tous les cookies pour une expérience optimale.</p>
       <div class="cookie-consent-buttons">
-        <button id="accept-cookies" class="btn-primary">Tout accepter</button>
         <button id="customize-cookies" class="btn-outline">Personnaliser mes préférences</button>
+        <button id="accept-cookies" class="btn-primary">Tout accepter</button>
       </div>
     </div>
   `;
