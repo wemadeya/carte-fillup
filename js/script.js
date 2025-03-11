@@ -11,49 +11,31 @@ const map = new mapboxgl.Map({
   zoom: 5,
 });
 
-// Gestion des cookies
 document.addEventListener('DOMContentLoaded', function() {
   const cookieSettingsButton = document.getElementById("cookie-settings-button");
 
-  function createMapBlocker() {
-    const mapBlocker = document.createElement("div");
-    mapBlocker.id = "map-blocker";
-    mapBlocker.innerHTML = `
-      <div class="map-blocker-content">
-        <img src="https://fillupmedia.fr/wp-content/uploads/2022/11/cropped-logo-light.png" alt="Logo" class="logo-cookie">
+  function createInitialConsentPopup() {
+    const consentPopup = document.createElement("div");
+    consentPopup.id = "cookie-consent-popup";
+    consentPopup.innerHTML = `
+      <div class="cookie-consent-content">
         <h2>Bienvenue sur notre carte interactive</h2>
-        <p>Pour accéder à cette carte, nous utilisons des cookies nécessaires à son bon fonctionnement.</p>
+        <p>Ce site utilise des cookies pour améliorer votre expérience et nous permettre d'analyser son utilisation.</p>
         <p>Vous pouvez personnaliser vos préférences ou accepter tous les cookies pour une expérience optimale.</p>
-        <div class="map-blocker-buttons">
-          <button id="accept-from-blocker" class="btn-primary">Accepter tous les cookies</button>
-          <button id="preferences-from-blocker" class="btn-outline">Personnaliser mes préférences</button>
-          <button id="reject-from-blocker" class="btn-secondary">Refuser</button>
+        <div class="cookie-consent-buttons">
+          <button id="accept-cookies" class="btn-primary">Accepter tous les cookies</button>
+          <button id="customize-cookies" class="btn-outline">Personnaliser mes préférences</button>
+          <button id="essential-only" class="btn-secondary">Cookies essentiels uniquement</button>
         </div>
       </div>
     `;
-    document.body.appendChild(mapBlocker);
 
-    document.getElementById("accept-from-blocker").addEventListener("click", acceptCookies);
-    document.getElementById("reject-from-blocker").addEventListener("click", rejectCookies);
-    document.getElementById("preferences-from-blocker").addEventListener("click", openCookiePreferences);
+    document.body.appendChild(consentPopup);
+    document.getElementById("accept-cookies").addEventListener("click", acceptCookies);
+    document.getElementById("customize-cookies").addEventListener("click", openCookiePreferences);
+    document.getElementById("essential-only").addEventListener("click", essentialCookiesOnly);
 
-    return mapBlocker;
-  }
-
-  function showRefusalMessage() {
-    const mapBlocker = document.getElementById("map-blocker") || createMapBlocker();
-    mapBlocker.querySelector(".map-blocker-content").innerHTML = `
-      <h2>Carte non disponible</h2>
-      <p>Vous avez refusé les cookies nécessaires à l'affichage de la carte.</p>
-      <p>Pour voir la carte, veuillez accepter les cookies.</p>
-      <button id="reset-cookies" class="btn-primary">Modifier mes préférences</button>
-    `;
-
-    document.getElementById("reset-cookies").addEventListener("click", function() {
-      localStorage.removeItem("cookiesAccepted");
-      localStorage.removeItem("cookiePreferences");
-      location.reload();
-    });
+    return consentPopup;
   }
 
   function initCookiePreferences() {
@@ -76,20 +58,60 @@ document.addEventListener('DOMContentLoaded', function() {
     return cookiePreferences;
   }
 
-  if (localStorage.getItem("cookiesAccepted") === null) {
-    createMapBlocker();
-  } else if (localStorage.getItem("cookiesAccepted") === "true") {
-    loadGoogleTags();
-    initMap();
-    cookieSettingsButton.style.display = "flex";
+  if (localStorage.getItem("cookiesChoice") === null) {
+    createInitialConsentPopup();
   } else {
-    showRefusalMessage();
+    initMap();
+
+    cookieSettingsButton.style.display = "flex";
+
+    const cookiePreferences = initCookiePreferences();
+    if (cookiePreferences.analytics || cookiePreferences.marketing) {
+      loadGoogleTags();
+    }
   }
 
   cookieSettingsButton?.addEventListener("click", openCookiePreferences);
-
-  initCookiePreferences();
 });
+
+function essentialCookiesOnly() {
+  const cookiePreferences = {
+    essential: true,
+    analytics: false,
+    marketing: false
+  };
+
+  savePreferencesAndInit(cookiePreferences);
+}
+
+function acceptCookies() {
+  const cookiePreferences = {
+    essential: true,
+    analytics: true,
+    marketing: true
+  };
+
+  savePreferencesAndInit(cookiePreferences);
+}
+
+function savePreferencesAndInit(preferences) {
+  localStorage.setItem("cookiePreferences", JSON.stringify(preferences));
+  localStorage.setItem("cookiesChoice", "made");
+
+  const consentPopup = document.getElementById("cookie-consent-popup");
+  if (consentPopup) {
+    consentPopup.remove();
+  }
+
+  document.getElementById("cookie-settings-button").style.display = "flex";
+
+  initMap();
+
+  if (preferences.analytics || preferences.marketing) {
+    updateGoogleConsent(preferences);
+    loadGoogleTags();
+  }
+}
 
 function openCookiePreferences() {
   const modal = document.getElementById("cookie-preferences-modal");
@@ -112,76 +134,27 @@ function closeCookiePreferences() {
 
 function saveCookiePreferences() {
   const cookiePreferences = {
-    essential: true,
+    essential: true, // Toujours activé
     analytics: document.getElementById("cookie-analytics").checked,
     marketing: document.getElementById("cookie-marketing").checked
   };
 
   localStorage.setItem("cookiePreferences", JSON.stringify(cookiePreferences));
-  localStorage.setItem("cookiesAccepted", "true");
-
-  updateGoogleConsent(cookiePreferences);
+  localStorage.setItem("cookiesChoice", "made");
 
   closeCookiePreferences();
 
-  const mapBlocker = document.getElementById("map-blocker");
-  if (mapBlocker) {
-    mapBlocker.remove();
-  }
-
-  document.getElementById("cookie-settings-button").style.display = "flex";
-
-  loadGoogleTags();
-  initMap();
-}
-
-function acceptCookies() {
-  const cookiePreferences = {
-    essential: true,
-    analytics: true,
-    marketing: true
-  };
-
-  localStorage.setItem("cookiePreferences", JSON.stringify(cookiePreferences));
-  localStorage.setItem("cookiesAccepted", "true");
-
-  const mapBlocker = document.getElementById("map-blocker");
-  if (mapBlocker) {
-    mapBlocker.remove();
+  const consentPopup = document.getElementById("cookie-consent-popup");
+  if (consentPopup) {
+    consentPopup.remove();
   }
 
   document.getElementById("cookie-settings-button").style.display = "flex";
 
   updateGoogleConsent(cookiePreferences);
 
-  loadGoogleTags();
-  initMap();
-}
-
-function rejectCookies() {
-  const cookiePreferences = {
-    essential: true,
-    analytics: false,
-    marketing: false
-  };
-
-  localStorage.setItem("cookiePreferences", JSON.stringify(cookiePreferences));
-  localStorage.setItem("cookiesAccepted", "false");
-
-  const mapBlocker = document.getElementById("map-blocker");
-  if (mapBlocker) {
-    mapBlocker.querySelector(".map-blocker-content").innerHTML = `
-      <h2>Carte non disponible</h2>
-      <p>Vous avez refusé les cookies nécessaires à l'affichage de la carte.</p>
-      <p>Pour voir la carte, veuillez accepter les cookies.</p>
-      <button id="reset-cookies" class="btn-primary">Modifier mes préférences</button>
-    `;
-
-    document.getElementById("reset-cookies").addEventListener("click", function() {
-      localStorage.removeItem("cookiesAccepted");
-      localStorage.removeItem("cookiePreferences");
-      location.reload();
-    });
+  if (cookiePreferences.analytics || cookiePreferences.marketing) {
+    loadGoogleTags();
   }
 }
 
@@ -197,7 +170,7 @@ function updateGoogleConsent(preferences) {
 }
 
 function loadGoogleTags() {
-  if (localStorage.getItem("cookiesAccepted") === "true") {
+  if (!document.querySelector('script[src*="googletagmanager.com/gtag/js"]')) {
     let gtmScript = document.createElement("script");
     gtmScript.src = "https://www.googletagmanager.com/gtag/js?id=G-VLY31TFTPC";
     gtmScript.async = true;
