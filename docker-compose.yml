@@ -1,5 +1,4 @@
 version: '3.9'
-
 services:
   web:
     image: braparison/carte-fillup-front
@@ -9,4 +8,5 @@ services:
     volumes:
       - .:/app
     environment:
-      NODE_ENV: development
+      NODE_ENV: production
+    restart: always
