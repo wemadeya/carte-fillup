@@ -980,7 +980,6 @@ input:checked + .cookie-slider:before {
         position: relative;
     }
 
-
     .devis-mobile {
         display: flex;
         position: absolute;
@@ -988,10 +987,10 @@ input:checked + .cookie-slider:before {
         align-items: center;
         padding: 10px;
         border-radius: 20px;
-        background-color: #FCD434;
+        background-color: transparent;
         color: black;
         cursor: pointer;
-        border: 1px solid #FCD434;
+        border: 1px solid #4DBDC6;
         font-size: 14px;
         width: 49%;
         right: 0;

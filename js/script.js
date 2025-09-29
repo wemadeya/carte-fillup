@@ -4,16 +4,41 @@ let circle;
 mapboxgl.accessToken =
   "pk.eyJ1Ijoid2VtYWRleWEiLCJhIjoiY2xzYzI2cXJwMDg2eTJtbWhnZGt0NHEwMiJ9.wa4jCE_DBLiNKSuNUTOpHQ";
 
+// Fonction pour récupérer les paramètres URL
+function getUrlParams() {
+  const urlParams = new URLSearchParams(window.location.search);
+  return {
+    longitude: urlParams.get("lon"),
+    latitude: urlParams.get("lat"),
+    zoom: urlParams.get("zoom"),
+  };
+}
+
+// Récupérer les paramètres URL pour initialiser la carte
+const urlParams = getUrlParams();
+let initialCenter = [2.339294, 46.8];
+let initialZoom = 5;
+
+if (urlParams.longitude && urlParams.latitude) {
+  initialCenter = [
+    parseFloat(urlParams.longitude),
+    parseFloat(urlParams.latitude),
+  ];
+  initialZoom = urlParams.zoom ? parseFloat(urlParams.zoom) : 5;
+}
+
 const map = new mapboxgl.Map({
   container: "map",
   style: "mapbox://styles/wemadeya/clqcioya500b201qr8m6v1wsr",
-  center: [2.339294, 46.8],
-  zoom: 5,
+  center: initialCenter,
+  zoom: initialZoom,
 });
 
 // Gestion des cookies
-document.addEventListener('DOMContentLoaded', function() {
-  const cookieSettingsButton = document.getElementById("cookie-settings-button");
+document.addEventListener("DOMContentLoaded", function () {
+  const cookieSettingsButton = document.getElementById(
+    "cookie-settings-button"
+  );
 
   if (cookieSettingsButton) {
     cookieSettingsButton.style.display = "none";
@@ -51,7 +76,7 @@ function createConsentUI() {
   overlay.appendChild(consentPopup);
 
   document.getElementById("accept-cookies").addEventListener("click", () => {
-    saveUserChoice({essential: true, analytics: true, marketing: true});
+    saveUserChoice({ essential: true, analytics: true, marketing: true });
   });
 
   document.getElementById("customize-cookies").addEventListener("click", () => {
@@ -80,7 +105,9 @@ function saveUserChoice(preferences) {
 function applyUserPreferences() {
   const cookiePreferences = getUserPreferences();
 
-  const cookieSettingsButton = document.getElementById("cookie-settings-button");
+  const cookieSettingsButton = document.getElementById(
+    "cookie-settings-button"
+  );
   if (cookieSettingsButton) {
     cookieSettingsButton.style.display = "flex";
   }
@@ -92,11 +119,13 @@ function applyUserPreferences() {
 }
 
 function getUserPreferences() {
-  return JSON.parse(localStorage.getItem("cookiePreferences")) || {
-    essential: true,
-    analytics: false,
-    marketing: false
-  };
+  return (
+    JSON.parse(localStorage.getItem("cookiePreferences")) || {
+      essential: true,
+      analytics: false,
+      marketing: false,
+    }
+  );
 }
 
 function openCookiePreferences() {
@@ -129,7 +158,7 @@ function saveCookiePreferences() {
   const preferences = {
     essential: true,
     analytics: document.getElementById("cookie-analytics")?.checked || false,
-    marketing: document.getElementById("cookie-marketing")?.checked || false
+    marketing: document.getElementById("cookie-marketing")?.checked || false,
   };
 
   saveUserChoice(preferences);
@@ -138,12 +167,14 @@ function saveCookiePreferences() {
 
 function updateGoogleConsent(preferences) {
   window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('consent', 'update', {
-    'ad_storage': preferences.marketing ? 'granted' : 'denied',
-    'analytics_storage': preferences.analytics ? 'granted' : 'denied',
-    'ad_user_data': preferences.marketing ? 'granted' : 'denied',
-    'ad_personalization': preferences.marketing ? 'granted' : 'denied'
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+  gtag("consent", "update", {
+    ad_storage: preferences.marketing ? "granted" : "denied",
+    analytics_storage: preferences.analytics ? "granted" : "denied",
+    ad_user_data: preferences.marketing ? "granted" : "denied",
+    ad_personalization: preferences.marketing ? "granted" : "denied",
   });
 }
 
@@ -155,31 +186,68 @@ function loadGoogleTags() {
     document.head.appendChild(gtmScript);
 
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-VLY31TFTPC');
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+    gtag("config", "G-VLY31TFTPC");
   }
 }
 
 // Si l'utilisateur est sur un appareil mobile, ajuster le zoom
 if (isMobileDevice()) {
-  map.setZoom(4); 
+  map.setZoom(4);
 }
 
 // Fonction pour récupérer les données de l'API
-async function fetchStations() {
+async function fetchStations(longitude = null, latitude = null, zoom = null) {
   try {
-    const apiUrl = `https://plateforme.wemadeya.fr/api/stations`; 
+    // Si aucun paramètre n'est fourni, essayer de les récupérer depuis l'URL
+    if (!longitude && !latitude && !zoom) {
+      const urlParams = getUrlParams();
+      longitude = urlParams.longitude;
+      latitude = urlParams.latitude;
+      zoom = urlParams.zoom;
+    }
+
+    // Construire l'URL avec les paramètres
+    let apiUrl = `http://localhost:3000/api/stations`;
+    const params = new URLSearchParams();
+
+    if (longitude) params.append("lon", longitude);
+    if (latitude) params.append("lat", latitude);
+    if (zoom) params.append("zoom", zoom);
+
+    if (params.toString()) {
+      apiUrl += `?${params.toString()}`;
+    }
+
     const response = await fetch(apiUrl);
-    return await response.json();
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
   } catch (error) {
-    console.error("Erreur lors de la récupération des données :", error);
+    console.error(
+      "Erreur lors de la récupération des données :",
+      error.message
+    );
   }
 }
 
-// Fonction pour initialiser la carte avec les données de l'API
-async function initMap() {
-  const stations = await fetchStations();
+// Fonction pour nettoyer les marqueurs existants
+function clearMapMarkers() {
+  const existingMarkers = document.querySelectorAll(".marker");
+  existingMarkers.forEach((marker) => marker.remove());
+}
+
+// Fonction pour mettre à jour les marqueurs sur la carte
+function updateMapMarkers(stations) {
+  // Nettoyer les anciens marqueurs
+  clearMapMarkers();
 
   const geojson = {
     features: stations.map((station) => ({
@@ -206,19 +274,25 @@ async function initMap() {
     const el = document.createElement("div");
     // Ajoutez la class marker
     if (marker.properties.status === "Active") {
-      el.style.backgroundImage = "url(https://fillupmedia.fr/wp-content/uploads/2024/01/icon_location-blue.svg)";
-      
+      el.style.backgroundImage =
+        "url(https://fillupmedia.fr/wp-content/uploads/2024/01/icon_location-blue.svg)";
     } else {
-      el.style.backgroundImage = "url(https://fillupmedia.fr/wp-content/uploads/2024/06/icon-orange.svg)";
+      el.style.backgroundImage =
+        "url(https://fillupmedia.fr/wp-content/uploads/2024/06/icon-orange.svg)";
     }
     el.className = "marker";
 
     new mapboxgl.Marker(el).setLngLat(marker.geometry.coordinates).addTo(map);
 
     // Créer une card
-    const statusColor = marker.properties.status === "Active" ? "color: #4DBDC6; background: rgba(77, 189, 198, 0.20);" : " color: #BD9700; background: rgba(252, 212, 52, 0.20);";
+    const statusColor =
+      marker.properties.status === "Active"
+        ? "color: #4DBDC6; background: rgba(77, 189, 198, 0.20);"
+        : " color: #BD9700; background: rgba(252, 212, 52, 0.20);";
     const regex = /65/;
-    const serviceTitle = regex.test(marker.properties.tailleEcran) ? "Galerie marchande" : "Station-service";
+    const serviceTitle = regex.test(marker.properties.tailleEcran)
+      ? "Galerie marchande"
+      : "Station-service";
 
     const card = `
                   <div class="card">
@@ -270,13 +344,13 @@ async function initMap() {
     // Gérer l'événement de clic sur le marqueur
     el.addEventListener("click", () => {
       const [longitude, latitude] = marker.geometry.coordinates;
-      const adjustedLatitude = latitude - 0.005; 
+      const adjustedLatitude = latitude - 0.005;
       map.flyTo({
         center: [longitude, adjustedLatitude],
         zoom: 14,
         speed: 1.2,
         curve: 1.4,
-        essential: true 
+        essential: true,
       });
 
       if (window.innerWidth <= 768) {
@@ -288,7 +362,7 @@ async function initMap() {
         mobileCard.innerHTML = card;
         mobileCard.style.display = "block";
         settings.style.display = "none";
-        form.style.display = "none"; 
+        form.style.display = "none";
         maskMap.classList.add("anim-mask_map");
 
         // Écouter les événements mousedown
@@ -332,6 +406,14 @@ async function initMap() {
   });
 }
 
+// Fonction pour initialiser la carte avec les données de l'API
+async function initMap() {
+  const stations = await fetchStations();
+  if (stations && stations.length > 0) {
+    updateMapMarkers(stations);
+  }
+}
+
 // Appeler la fonction pour initialiser la carte
 initMap();
 
@@ -342,34 +424,35 @@ function updateDistanceValue(value) {
 
 window.onload = function () {
   updateDistanceValue(document.getElementById("distance").value);
+  updateDevisButton(); // Initialiser l'état du bouton de devis
 };
 
 //fonction pour chercher une adresse et mettre à jour la carte
-function findLocationAndUpdateMap() {
+async function findLocationAndUpdateMap() {
   const address = document.getElementById("search").value;
   const radius = document.getElementById("distance").value;
 
   const geocodeUrl =
-      "https://nominatim.openstreetmap.org/search.php?q=" +
-      encodeURIComponent(address) +
-      "&format=jsonv2";
+    "https://nominatim.openstreetmap.org/search.php?q=" +
+    encodeURIComponent(address) +
+    "&format=jsonv2";
 
-  fetch(geocodeUrl)
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.length > 0) {
-        const lat = parseFloat(data[0].lat);
-        const lon = parseFloat(data[0].lon);
+  try {
+    const response = await fetch(geocodeUrl);
+    const data = await response.json();
 
-        updateMapWithStations(lat, lon, radius);
-      } else {
-        alert("Adresse introuvable");
-      }
-    })
-    .catch((error) => {
-      console.error("Erreur lors de la récupération des données:", error);
-      alert("Erreur lors de la recherche de l'adresse");
-    });
+    if (data.length > 0) {
+      const lat = parseFloat(data[0].lat);
+      const lon = parseFloat(data[0].lon);
+
+      await updateMapWithStations(lat, lon, radius);
+    } else {
+      alert("Adresse introuvable");
+    }
+  } catch (error) {
+    console.error("Erreur lors de la récupération des données:", error);
+    alert("Erreur lors de la recherche de l'adresse");
+  }
 }
 
 function isMobileDevice() {
@@ -381,7 +464,7 @@ const metersToPixelsAtMaxZoom = (meters, latitude) =>
   meters / 0.075 / Math.cos((latitude * Math.PI) / 180);
 
 // Fonction pour créer un cercle en fonction des coordonnées et du rayon
-function updateMapWithStations(lat, lon, radius) {
+async function updateMapWithStations(lat, lon, radius) {
   if (map.getLayer("circle")) {
     map.removeLayer("circle");
     map.removeSource("circle");
@@ -392,6 +475,13 @@ function updateMapWithStations(lat, lon, radius) {
   }
 
   const radiusInMeters = radius * 1000;
+
+  // Récupérer les stations avec les nouveaux paramètres de géolocalisation
+  const stations = await fetchStations(lon, lat, radius);
+  if (stations && stations.length > 0) {
+    // Mettre à jour les marqueurs sur la carte
+    updateMapMarkers(stations);
+  }
 
   // Ajoutez une source et un layer pour le cercle
   map.addSource("circle", {
@@ -456,14 +546,14 @@ function updateMapWithStations(lat, lon, radius) {
 
   // Ajuster le zoom et le centre de la carte pour inclure le cercle entièrement
   const bounds = calculateBounds([lon, lat], radiusInMeters);
-  const fitOptions = {padding: 50};
+  const fitOptions = { padding: 50 };
 
   if (isMobileDevice()) {
     fitOptions.padding = 100;
     fitOptions.maxZoom = 10;
-}
+  }
 
-map.fitBounds(bounds, fitOptions);
+  map.fitBounds(bounds, fitOptions);
 }
 
 // Fonction simplifiée pour calculer les limites d'un cercle sans Turf.js
@@ -488,14 +578,15 @@ function suggestAddress() {
   }
 
   const url = `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(
-      query
+    query
   )}&limit=5&autocomplete=1`;
 
   fetch(url)
     .then((response) => response.json())
     .then((data) => {
       const suggestions = data.features;
-      const suggestionsContainer = document.getElementById("addressSuggestions");
+      const suggestionsContainer =
+        document.getElementById("addressSuggestions");
       suggestionsContainer.innerHTML = "";
       suggestions.forEach((suggestion) => {
         const div = document.createElement("div");
@@ -627,7 +718,7 @@ const message = {
   enseigne: "L'enseigne est requise.",
   zip: "Le code postal est requis et doit être valide.",
   phone: "Le numéro de téléphone est requis et doit être valide.",
-  consentement: "Vous devez accepter la politique de confidentialité."
+  consentement: "Vous devez accepter la politique de confidentialité.",
 };
 
 // Regex pour la validation
@@ -725,19 +816,8 @@ function checkConsentement(consentement, message) {
   return true;
 }
 
-// Ajoute un événement aux inputs du formulaire
-document.getElementById("lastname").addEventListener('change', () => { checkLastName(document.getElementById("lastname"), message) });
-document.getElementById("firstname").addEventListener('change', () => { checkFirstName(document.getElementById("firstname"), message) });
-document.getElementById("email").addEventListener('change', () => { checkEmail(document.getElementById("email"), message) });
-document.getElementById("company").addEventListener('change', () => { checkCompany(document.getElementById("company"), message) });
-document.getElementById("zip").addEventListener('change', () => { checkZip(document.getElementById("zip"), message) });
-document.getElementById("phone").addEventListener('change', () => { checkPhone(document.getElementById("phone"), message) });
-document.getElementById("consentement").addEventListener('change', () => { checkConsentement(document.getElementById("consentement"), message) });
-
-// Ajoute un événement au submit du formulaire
-document.getElementById("formulaire").addEventListener("submit", function (event) {
-  event.preventDefault();
-
+// Fonction pour vérifier si tous les champs sont valides
+function checkAllFieldsValid() {
   const lastname = document.getElementById("lastname");
   const firstname = document.getElementById("firstname");
   const company = document.getElementById("company");
@@ -746,49 +826,129 @@ document.getElementById("formulaire").addEventListener("submit", function (event
   const phone = document.getElementById("phone");
   const consentement = document.getElementById("consentement");
 
-  const isCheckedLastName = checkLastName(lastname, message);
-  const isCheckedFirstName = checkFirstName(firstname, message);
-  const isCheckedEmail = checkEmail(email, message);
-  const isCheckedCompany = checkCompany(company, message);
-  const isCheckedZip = checkZip(zip, message);
-  const isCheckedPhone = checkPhone(phone, message);
-  const isCheckedConsentement = checkConsentement(consentement, message);
+  return (
+    lastname.value.length >= 2 &&
+    lastname.value.match(regexName) &&
+    firstname.value.length >= 2 &&
+    firstname.value.match(regexName) &&
+    company.value.trim() !== "" &&
+    zip.value.match(regexZip) &&
+    email.value.match(regexEmail) &&
+    phone.value.match(regexPhone) &&
+    consentement.checked
+  );
+}
 
-  if (isCheckedLastName && isCheckedFirstName && isCheckedEmail && isCheckedCompany && isCheckedZip && isCheckedPhone && isCheckedConsentement) {
-    const url = `https://plateforme.wemadeya.fr/api/submit-form`;
+// Fonction pour mettre à jour l'état du bouton de devis
+function updateDevisButton() {
+  const devisButton = document.getElementById("devis");
+  const isFormValid = checkAllFieldsValid();
 
-    const formData = {
-      lastname: lastname.value,
-      firstname: firstname.value,
-      company: company.value,
-      zip: zip.value,
-      email: email.value,
-      phone: phone.value,
-      consentement: consentement.checked ? "true" : "false"
-    };
-
-    fetch(url, {
-      method: "POST",
-      body: JSON.stringify(formData),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log("Success:", data);
-      showPopup("Merci de l’intérêt que vous portez pour nos services ! Nous avons bien reçu votre demande de devis et reviendrons vers vous dans les plus brefs délais.");
-      hideForm();
-      mainBlock();
-      document.getElementById("formulaire").reset();
-    })
-    .catch((error) => {
-      console.error("Erreur:", error);
-    });
-  } else {
-    document.getElementById("error-message").style.display = "block";
+  if (devisButton) {
+    devisButton.disabled = !isFormValid;
+    devisButton.style.opacity = isFormValid ? "1" : "0.5";
+    devisButton.style.cursor = isFormValid ? "pointer" : "not-allowed";
   }
+}
+
+// Ajoute un événement aux inputs du formulaire
+document.getElementById("lastname").addEventListener("input", () => {
+  checkLastName(document.getElementById("lastname"), message);
+  updateDevisButton();
 });
+document.getElementById("firstname").addEventListener("input", () => {
+  checkFirstName(document.getElementById("firstname"), message);
+  updateDevisButton();
+});
+document.getElementById("email").addEventListener("input", () => {
+  checkEmail(document.getElementById("email"), message);
+  updateDevisButton();
+});
+document.getElementById("company").addEventListener("input", () => {
+  checkCompany(document.getElementById("company"), message);
+  updateDevisButton();
+});
+document.getElementById("zip").addEventListener("input", () => {
+  checkZip(document.getElementById("zip"), message);
+  updateDevisButton();
+});
+document.getElementById("phone").addEventListener("input", () => {
+  checkPhone(document.getElementById("phone"), message);
+  updateDevisButton();
+});
+document.getElementById("consentement").addEventListener("change", () => {
+  checkConsentement(document.getElementById("consentement"), message);
+  updateDevisButton();
+});
+
+// Ajoute un événement au submit du formulaire
+document
+  .getElementById("formulaire")
+  .addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const lastname = document.getElementById("lastname");
+    const firstname = document.getElementById("firstname");
+    const company = document.getElementById("company");
+    const zip = document.getElementById("zip");
+    const email = document.getElementById("email");
+    const phone = document.getElementById("phone");
+    const consentement = document.getElementById("consentement");
+
+    const isCheckedLastName = checkLastName(lastname, message);
+    const isCheckedFirstName = checkFirstName(firstname, message);
+    const isCheckedEmail = checkEmail(email, message);
+    const isCheckedCompany = checkCompany(company, message);
+    const isCheckedZip = checkZip(zip, message);
+    const isCheckedPhone = checkPhone(phone, message);
+    const isCheckedConsentement = checkConsentement(consentement, message);
+
+    if (
+      isCheckedLastName &&
+      isCheckedFirstName &&
+      isCheckedEmail &&
+      isCheckedCompany &&
+      isCheckedZip &&
+      isCheckedPhone &&
+      isCheckedConsentement
+    ) {
+      const url = `https://plateforme.wemadeya.fr/api/submit-form`;
+
+      const formData = {
+        lastname: lastname.value,
+        firstname: firstname.value,
+        company: company.value,
+        zip: zip.value,
+        email: email.value,
+        phone: phone.value,
+        consentement: consentement.checked ? "true" : "false",
+      };
+
+      fetch(url, {
+        method: "POST",
+        body: JSON.stringify(formData),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Success:", data);
+          showPopup(
+            "Merci de l'intérêt que vous portez pour nos services ! Nous avons bien reçu votre demande de devis et reviendrons vers vous dans les plus brefs délais."
+          );
+          hideForm();
+          mainBlock();
+          document.getElementById("formulaire").reset();
+          updateDevisButton();
+        })
+        .catch((error) => {
+          console.error("Erreur:", error);
+        });
+    } else {
+      document.getElementById("error-message").style.display = "block";
+    }
+  });
 
 function showPopup(message) {
   document.getElementById("popupContent").innerText = message;
