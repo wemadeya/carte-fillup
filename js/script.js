@@ -211,7 +211,7 @@ async function fetchStations(longitude = null, latitude = null, zoom = null) {
     }
 
     // Construire l'URL avec les paramètres
-    let apiUrl = `http://plateforme.wemadeya.fr/api/stations`;
+    let apiUrl = `https://plateforme.wemadeya.fr/api/stations`;
     const params = new URLSearchParams();
 
     if (longitude) params.append("lon", longitude);
