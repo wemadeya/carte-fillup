@@ -11,6 +11,8 @@ function getUrlParams() {
     longitude: urlParams.get("lon"),
     latitude: urlParams.get("lat"),
     zoom: urlParams.get("zoom"),
+    address: urlParams.get("address"),
+    radius: urlParams.get("radius"),
   };
 }
 
@@ -24,7 +26,7 @@ if (urlParams.longitude && urlParams.latitude) {
     parseFloat(urlParams.longitude),
     parseFloat(urlParams.latitude),
   ];
-  initialZoom = urlParams.zoom ? parseFloat(urlParams.zoom) : 5;
+  initialZoom = urlParams.zoom ? parseFloat(urlParams.zoom) : 10;
 }
 
 const map = new mapboxgl.Map({
@@ -194,8 +196,8 @@ function loadGoogleTags() {
   }
 }
 
-// Si l'utilisateur est sur un appareil mobile, ajuster le zoom
-if (isMobileDevice()) {
+// Si l'utilisateur est sur un appareil mobile et qu'il n'y a pas de paramètres URL, ajuster le zoom
+if (isMobileDevice() && (!urlParams.longitude || !urlParams.latitude)) {
   map.setZoom(4);
 }
 
@@ -412,6 +414,38 @@ async function initMap() {
   if (stations && stations.length > 0) {
     updateMapMarkers(stations);
   }
+
+  // Pré-remplir les champs avec les paramètres URL
+  const urlParams = getUrlParams();
+  if (urlParams.address) {
+    const searchInput = document.getElementById("search");
+    if (searchInput) {
+      searchInput.value = decodeURIComponent(urlParams.address);
+    }
+  }
+
+  if (urlParams.radius) {
+    const radiusInput = document.getElementById("distance");
+    const radiusValue = document.getElementById("distanceValue");
+    if (radiusInput && radiusValue) {
+      radiusInput.value = urlParams.radius;
+      radiusValue.textContent = urlParams.radius;
+    }
+  }
+
+  // Si on a des paramètres URL (adresse + rayon), lancer automatiquement la recherche
+  if (urlParams.address && urlParams.radius) {
+    setTimeout(() => {
+      findLocationAndUpdateMap();
+
+      // Afficher le formulaire selon la plateforme
+      if (isMobileDevice()) {
+        showDevisBtn();
+      } else {
+        showForm();
+      }
+    }, 1000);
+  }
 }
 
 // Appeler la fonction pour initialiser la carte
@@ -432,18 +466,29 @@ async function findLocationAndUpdateMap() {
   const address = document.getElementById("search").value;
   const radius = document.getElementById("distance").value;
 
-  const geocodeUrl =
-    "https://nominatim.openstreetmap.org/search.php?q=" +
-    encodeURIComponent(address) +
-    "&format=jsonv2";
+  const geocodeUrl = `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(
+    address
+  )}&limit=1`;
 
   try {
-    const response = await fetch(geocodeUrl);
+    const response = await fetch(geocodeUrl, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "User-Agent": "FillupMedia/1.0",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
     const data = await response.json();
 
-    if (data.length > 0) {
-      const lat = parseFloat(data[0].lat);
-      const lon = parseFloat(data[0].lon);
+    if (data.features && data.features.length > 0) {
+      const coordinates = data.features[0].geometry.coordinates;
+      const lon = coordinates[0];
+      const lat = coordinates[1];
 
       await updateMapWithStations(lat, lon, radius);
     } else {
