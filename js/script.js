@@ -433,10 +433,15 @@ async function initMap() {
     }
   }
 
-  // Si on a des paramètres URL (adresse + rayon), lancer automatiquement la recherche
+  // Si on a des paramètres URL (adresse + rayon), faire la recherche complète
   if (urlParams.address && urlParams.radius) {
-    setTimeout(() => {
-      findLocationAndUpdateMap();
+    setTimeout(async () => {
+      // Faire la recherche complète avec cercle et marqueurs
+      const lat = parseFloat(urlParams.latitude);
+      const lon = parseFloat(urlParams.longitude);
+      const radius = parseFloat(urlParams.radius);
+
+      await updateMapWithStations(lat, lon, radius);
 
       // Afficher le formulaire selon la plateforme
       if (isMobileDevice()) {
@@ -444,7 +449,7 @@ async function initMap() {
       } else {
         showForm();
       }
-    }, 1000);
+    }, 500);
   }
 }
 
