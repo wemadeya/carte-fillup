@@ -1,0 +1,244 @@
+<form class="form" action="">
+    <div class="input-container">
+        <input type="text" name="adress" id="adress" placeholder="Adresse, code postal, etc..." oninput="suggestAddress()" autocomplete="off">
+    </div>
+    <button type="submit">Rechercher</button>
+    <div id="addressSuggestions" class="suggestions"></div>
+</form>
+<script>
+         // Détecter iOS
+         function isIOS() {
+             return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+         }
+
+         // Fonction pour afficher des suggestions d'adresses
+         function suggestAddress() {
+             const query = document.getElementById("adress").value;
+             if (query.length < 3) {
+                 document.getElementById("addressSuggestions").style.display = "none";
+                 return;
+             }
+     
+             const url = `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&limit=5&autocomplete=1`;
+     
+             fetch(url, {
+                 method: 'GET',
+                 headers: {
+                     'Accept': 'application/json',
+                     'User-Agent': 'FillupMedia/1.0'
+                 }
+             })
+                 .then((response) => {
+                     if (!response.ok) {
+                         throw new Error(`HTTP error! status: ${response.status}`);
+                     }
+                     return response.json();
+                 })
+                 .then((data) => {
+                     const suggestions = data.features || [];
+                     const suggestionsContainer = document.getElementById("addressSuggestions");
+                     suggestionsContainer.innerHTML = "";
+                     
+                     suggestions.forEach((suggestion) => {
+                         const div = document.createElement("div");
+                         div.innerHTML = suggestion.properties.label;
+                         div.className = "suggestion-item";
+                         div.onclick = function () {
+                             selectAddress(suggestion);
+                         };
+                         suggestionsContainer.appendChild(div);
+                     });
+                     
+                 if (suggestions.length > 0) {
+                     suggestionsContainer.style.display = "block";
+                     
+                     // Appliquer la classe de fallback sur iOS si nécessaire
+                     if (isIOS()) {
+                         suggestionsContainer.classList.add('ios-fallback');
+                     }
+                 } else {
+                     suggestionsContainer.style.display = "none";
+                     suggestionsContainer.classList.remove('ios-fallback');
+                 }
+                 })
+                 .catch((error) => {
+                     console.error("Error fetching the address suggestions:", error);
+                     document.getElementById("addressSuggestions").style.display = "none";
+                 });
+         }
+
+        // Fonction pour sélectionner une adresse
+        function selectAddress(suggestion) {
+            // Compléter l'input avec l'adresse sélectionnée
+            document.getElementById("adress").value = suggestion.properties.label;
+            
+            // Cacher les suggestions
+            document.getElementById("addressSuggestions").style.display = "none";
+        }
+
+    // Cacher les suggestions quand on clique en dehors
+    document.onclick = function (e) {
+        if (!e.target.matches("#adress") && !e.target.closest(".suggestions")) {
+            document.getElementById("addressSuggestions").style.display = "none";
+        }
+    };
+
+         // Fonction pour géocoder une adresse et rediriger
+         function geocodeAndRedirect(address) {
+             const geocodeUrl = `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(address)}&limit=1`;
+             
+             fetch(geocodeUrl, {
+                 method: 'GET',
+                 headers: {
+                     'Accept': 'application/json',
+                     'User-Agent': 'FillupMedia/1.0'
+                 }
+             })
+                 .then((response) => {
+                     if (!response.ok) {
+                         throw new Error(`HTTP error! status: ${response.status}`);
+                     }
+                     return response.json();
+                 })
+                 .then((data) => {
+                     if (data.features && data.features.length > 0) {
+                         const coordinates = data.features[0].geometry.coordinates;
+                         const lon = coordinates[0];
+                         const lat = coordinates[1];
+                         
+                         // Rediriger vers carte.fillupmedia.fr avec les coordonnées, zoom et adresse
+                         const encodedAddress = encodeURIComponent(address);
+                         window.location.href = `https://carte.fillupmedia.fr?lon=${lon}&lat=${lat}&zoom=10&address=${encodedAddress}&radius=10`;
+                     } else {
+                         alert("Adresse introuvable");
+                     }
+                 })
+                 .catch((error) => {
+                     console.error("Erreur lors de la géocodage:", error);
+                     alert("Erreur lors de la recherche de l'adresse");
+                 });
+         }
+
+        const form = document.querySelector('form');
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const address = document.getElementById("adress").value.trim();
+            
+            if (address) {
+                geocodeAndRedirect(address);
+            }
+        });
+</script>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .form {
+        display: flex;
+        gap: 10px;
+        width: 100%;
+        padding: 5px;
+        border-radius: 999px;
+        background-color: white;
+        position: relative;
+    }
+
+    .input-container {
+        position: relative;
+        width: 100%;
+        display: flex;
+        align-items: center;
+    }
+
+    .form input {
+        border: none;
+        outline: none;
+        font-size: 14px;
+      	border-radius: 999px;
+        width: 100%;
+      	padding-left: 10px;
+    }
+
+    .suggestions {
+        position: absolute;
+        top: calc(100% + 5px);
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        max-height: 200px;
+        overflow-y: auto;
+        display: none;
+    }
+
+    .suggestion-item {
+        padding: 12px 16px;
+        cursor: pointer;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 14px;
+        transition: background-color 0.2s;
+    }
+
+    .suggestion-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .suggestion-item:last-child {
+        border-bottom: none;
+    }
+
+     .form button {
+         padding: 14px 24px;
+         border-width: 0px;
+         border-radius: 32px;
+         font-size: 14px;
+         color: #01122e;
+         background-color: #4DBDC6;
+         cursor: pointer;
+         white-space: nowrap;
+     }
+
+     /* Styles responsive */
+     @media (max-width: 768px) {
+         .form {
+             position: relative;
+         }
+
+         .input-container {
+             width: 100%;
+             position: relative;
+         }
+
+         .form input {
+             padding: 12px 16px;
+             font-size: 16px; 
+         }
+
+         .form button {
+             padding: 16px 24px;
+             font-size: 16px;
+         }
+
+         .suggestions {
+             position: absolute;
+             top: calc(100% + 5px);
+             left: 0;
+             right: 0;
+             max-height: 40vh;
+             z-index: 10000;
+             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+         }
+
+         .suggestion-item {
+             padding: 14px 16px;
+             font-size: 16px;
+             line-height: 1.4;
+         }
+     }
+</style>
