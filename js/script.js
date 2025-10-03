@@ -338,7 +338,7 @@ function updateMapMarkers(stations) {
                                   </div>
                               </div>
                           </div>
-                          <button class="devis-card" onclick="showDevisMarker()">Demander un devis</button>
+                          <button type="button" class="devis-card" onclick="showDevisMarker()">Demander un devis</button>
                       </div>
                   </div>
                   `;

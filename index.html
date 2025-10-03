@@ -73,7 +73,7 @@
                         <input id="searchAdress" class="searchAdress" type="submit" value="Rechercher" onclick="showForm()">
                         <div class="mobile-btn-container">
                             <input id="searchAdress-mobile" class="button" type="submit" value="Rechercher" onclick="showDevisBtn()">
-                            <button class="devis-mobile" onclick="showDevis()">Demander un devis</button>   
+                            <button type="button" class="devis-mobile" onclick="showDevis()">Demander un devis</button>   
                         </div>
                     </form>
                 </div>
@@ -146,7 +146,7 @@
         <div class="cookie-preferences-content">
             <div class="cookie-preferences-header">
                 <h2>Paramètres des cookies</h2>
-                <button class="close-modal" onclick="closeCookiePreferences()">×</button>
+                <button type="button" class="close-modal" onclick="closeCookiePreferences()">×</button>
             </div>
             <div class="cookie-preferences-body">
                 <p>Personnalisez vos préférences en matière de cookies :</p>
@@ -185,7 +185,7 @@
                 </div>
             </div>
             <div class="cookie-preferences-footer">
-                <button onclick="saveCookiePreferences()" class="btn-primary">Enregistrer mes préférences</button>
+                <button type="button" onclick="saveCookiePreferences()" class="btn-primary">Enregistrer mes préférences</button>
             </div>
         </div>
     </div>
@@ -194,7 +194,7 @@
     <div class="popup-overlay" id="popupOverlay"></div>
     <div class="popup-message" id="popupMessage">
         <p id="popupContent"></p>
-        <button onclick="closePopup()">Fermer</button>
+        <button type="button" onclick="closePopup()">Fermer</button>
     </div>
 
     <script src="./js/script.js"></script>
