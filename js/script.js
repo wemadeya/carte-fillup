@@ -277,7 +277,7 @@ function updateMapMarkers(stations) {
     // Ajoutez la class marker
     if (marker.properties.status === "Active") {
       el.style.backgroundImage =
-        "url(https://fillupmedia.fr/wp-content/uploads/2024/01/icon_location-blue.svg)";
+        "url(https://fillupmedia.fr/wp-content/uploads/2025/12/icon_goutte-blue.svg)";
     } else {
       el.style.backgroundImage =
         "url(https://fillupmedia.fr/wp-content/uploads/2024/06/icon-orange.svg)";
@@ -304,7 +304,7 @@ function updateMapMarkers(stations) {
                       <div class="card_wrapper">
                           <div class="close_wrapper">
                               <p>Fermer</p> 
-                              <img class="close" src="https://fillupmedia.fr/wp-content/uploads/2024/02/Close.svg" alt="icon close">
+                              <img class="close" src="https://fillupmedia.fr/wp-content/uploads/2025/12/icon_close.svg" alt="icon close">
                           </div>
                           <div class="service_wrapper">
                               <h3 class="service">${serviceTitle}</h3>
