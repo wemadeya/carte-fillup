@@ -304,7 +304,7 @@ function updateMapMarkers(stations) {
                       <div class="card_wrapper">
                           <div class="close_wrapper">
                               <p>Fermer</p> 
-                              <img class="close" src="https://fillupmedia.fr/wp-content/uploads/2025/12/icon_close.svg" alt="icon close">
+                              <img class="close" src="https://fillupmedia.fr/wp-content/uploads/2026/01/icon_close.svg" alt="icon close">
                           </div>
                           <div class="service_wrapper">
                               <h3 class="service">${serviceTitle}</h3>
