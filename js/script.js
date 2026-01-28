@@ -39,7 +39,7 @@ const map = new mapboxgl.Map({
 // Gestion des cookies
 document.addEventListener("DOMContentLoaded", function () {
   const cookieSettingsButton = document.getElementById(
-    "cookie-settings-button"
+    "cookie-settings-button",
   );
 
   if (cookieSettingsButton) {
@@ -108,7 +108,7 @@ function applyUserPreferences() {
   const cookiePreferences = getUserPreferences();
 
   const cookieSettingsButton = document.getElementById(
-    "cookie-settings-button"
+    "cookie-settings-button",
   );
   if (cookieSettingsButton) {
     cookieSettingsButton.style.display = "flex";
@@ -235,7 +235,7 @@ async function fetchStations(longitude = null, latitude = null, zoom = null) {
   } catch (error) {
     console.error(
       "Erreur lors de la récupération des données :",
-      error.message
+      error.message,
     );
   }
 }
@@ -277,10 +277,10 @@ function updateMapMarkers(stations) {
     // Ajoutez la class marker
     if (marker.properties.status === "Active") {
       el.style.backgroundImage =
-        "url(https://fillupmedia.fr/wp-content/uploads/2025/12/icon_goutte-blue.svg)";
+        "url(https://fillupmedia.fr/wp-content/uploads/2026/01/icon_goutte-blue.svg)";
     } else {
       el.style.backgroundImage =
-        "url(https://fillupmedia.fr/wp-content/uploads/2024/06/icon-orange.svg)";
+        "url(https://fillupmedia.fr/wp-content/uploads/2026/01/icon-orange.svg)";
     }
     el.className = "marker";
 
@@ -472,7 +472,7 @@ async function findLocationAndUpdateMap() {
   const radius = document.getElementById("distance").value;
 
   const geocodeUrl = `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(
-    address
+    address,
   )}&limit=1`;
 
   try {
@@ -628,7 +628,7 @@ function suggestAddress() {
   }
 
   const url = `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(
-    query
+    query,
   )}&limit=5&autocomplete=1`;
 
   fetch(url)
@@ -985,7 +985,7 @@ document
         .then((data) => {
           console.log("Success:", data);
           showPopup(
-            "Merci de l'intérêt que vous portez pour nos services ! Nous avons bien reçu votre demande de devis et reviendrons vers vous dans les plus brefs délais."
+            "Merci de l'intérêt que vous portez pour nos services ! Nous avons bien reçu votre demande de devis et reviendrons vers vous dans les plus brefs délais.",
           );
           hideForm();
           mainBlock();
