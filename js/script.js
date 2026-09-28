@@ -2,7 +2,7 @@
 let circle;
 
 mapboxgl.accessToken =
-  "pk.eyJ1Ijoid2VtYWRleWEiLCJhIjoiY2xzYzI2cXJwMDg2eTJtbWhnZGt0NHEwMiJ9.wa4jCE_DBLiNKSuNUTOpHQ";
+  "pk.eyJ1Ijoid2VtYWRleWEiLCJhIjoiY2xyNmlrYmRoMXp4dzJqdDN5d3k0b2NreSJ9.7Om_Fsl7rDAsyL1o77rjdA";
 
 // Fonction pour récupérer les paramètres URL
 function getUrlParams() {
