@@ -1,4 +1,12 @@
-node_modules
-Dockerfile
-.dockerignore
+# Tout ce qui est copié ici devient PUBLIC sur carte.fillupmedia.fr (le
+# Dockerfile copie le dossier entier dans le site nginx). Jusqu'au 05/11/2026,
+# .git (tout l'historique du code), .github et docker-compose.yml étaient servis.
+.git
+.github
 .gitignore
+.dockerignore
+.DS_Store
+Dockerfile
+docker-compose.yml
+node_modules
+*.md
