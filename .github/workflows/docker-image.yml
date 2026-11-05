@@ -1,4 +1,8 @@
-name: Build and Push Docker Image to GHCR
+name: Verifier que l'image Docker se construit
+
+# Ne publie plus rien : l'image etait poussee vers ghcr.io/raparisonbryan (compte
+# personnel d'un ancien developpeur). Depuis le 05/11/2026, le serveur construit
+# l'image lui-meme a partir de ce depot (/opt/docker/clients/carte-fillup).
 
 on:
   push:
@@ -8,26 +12,21 @@ on:
 
 permissions:
   contents: read
-  packages: write
-  actions: read 
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
-
-    - name: Log in to GHCR
-      uses: docker/login-action@v2
       with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GH_PAT }}
-
-    - name: Build the Docker image
-      run: docker build . --tag ghcr.io/raparisonbryan/carte-fillup-front:latest
-
-    - name: Push the Docker image
-      run: docker push ghcr.io/raparisonbryan/carte-fillup-front:latest
+        persist-credentials: false
+    - name: Construire l'image (sans la publier)
+      run: docker build . --tag carte-fillup-front:verification
+    - name: Verifier qu'aucun fichier interne n'est dans le site public
+      run: |
+        for f in .git .github docker-compose.yml .DS_Store Dockerfile; do
+          if docker run --rm carte-fillup-front:verification test -e "/usr/share/nginx/html/$f"; then
+            echo "ERREUR : $f serait public"; exit 1
+          fi
+        done
+        echo "Aucun fichier interne dans le site public."
