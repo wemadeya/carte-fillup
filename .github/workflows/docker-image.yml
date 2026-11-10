@@ -24,9 +24,26 @@ jobs:
       run: docker build . --tag carte-fillup-front:verification
     - name: Verifier qu'aucun fichier interne n'est dans le site public
       run: |
-        for f in .git .github docker-compose.yml .DS_Store Dockerfile; do
+        for f in .git .github docker-compose.yml .DS_Store Dockerfile nginx-default.conf; do
           if docker run --rm carte-fillup-front:verification test -e "/usr/share/nginx/html/$f"; then
             echo "ERREUR : $f serait public"; exit 1
           fi
         done
         echo "Aucun fichier interne dans le site public."
+    - name: Verifier que le navigateur revalide les pages, le JS et le CSS
+      # Sans Cache-Control, le navigateur garde script.js plusieurs heures : le
+      # 10/11/2026, des utilisateurs voyaient encore la carte cassee apres le
+      # deploiement du correctif du token Mapbox.
+      run: |
+        docker run -d --name carte -p 8080:80 carte-fillup-front:verification
+        for i in $(seq 1 10); do curl -s -o /dev/null http://localhost:8080/ && break; sleep 1; done
+        for chemin in / /index.html /form.html /js/script.js /style/style.css; do
+          reponse=$(curl -sI "http://localhost:8080$chemin" | tr -d '\r')
+          if ! echo "$reponse" | head -1 | grep -q ' 200'; then
+            echo "ERREUR : $chemin ne repond pas 200"; echo "$reponse"; exit 1
+          fi
+          if ! echo "$reponse" | grep -i '^cache-control:.*no-cache'; then
+            echo "ERREUR : $chemin n'a pas Cache-Control: no-cache"; echo "$reponse"; exit 1
+          fi
+        done
+        echo "Pages, JS et CSS revalides a chaque visite."
